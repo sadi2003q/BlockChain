@@ -80,7 +80,7 @@ export const DifferentiationSection = (
                                 ].map((item, i) => (
                                     <li key={i} className="flex items-start gap-3">
                       <span
-                          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-sm"
+                          className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-sm"
                           style={{ backgroundColor: `${colors.accent.danger}20`, color: colors.accent.danger }}
                       >
                         ✕
@@ -134,7 +134,7 @@ export const DifferentiationSection = (
                                 ].map((item, i) => (
                                     <li key={i} className="flex items-start gap-3">
                                         <CheckCircle
-                                            className="w-5 h-5 flex-shrink-0 mt-0.5"
+                                            className="w-5 h-5 shrink-0 mt-0.5"
                                             style={{ color: colors.accent.success }}
                                         />
                                         <span
@@ -161,8 +161,8 @@ export const DifferentiationSection = (
                             className="text-lg italic"
                             style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
                         >
-                            "It's so simple a first-year student can vote in 10 seconds, yet so secure
-                            a Cyber-Security Dean would approve it."
+                            &#34;It&#39;s so simple a first-year student can vote in 10 seconds, yet so secure
+                            a Cyber-Security Dean would approve it.&#34;
                         </p>
                     </div>
                 </div>
