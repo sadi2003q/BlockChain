@@ -1,15 +1,20 @@
 "use client"
 
 import React, { useState, FormEvent } from 'react';
-import { Shield, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Moon, Sun } from 'lucide-react';
 import {getColor} from "@/lib/_colors";
+import {ThemeToggleButton} from "@/components/signin/ThemeToggleButton";
+import {AnimatedGrid} from "@/components/signin/AnimatedGrid";
+import {Header} from "@/components/signin/Header";
+import {Form} from "@/components/signin/Form"
+import {Security} from "@/components/signin/Security";
+import {ForewordLink} from "@/components/signin/ForewordLink";
 
-interface ValidationErrors {
+export interface ValidationErrors {
     email?: string;
     password?: string;
 }
 
-type FocusedField = 'email' | 'password' | null;
+export type FocusedField = 'email' | 'password' | null;
 
 export default function VoteSecureSignIn() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
@@ -49,57 +54,17 @@ export default function VoteSecureSignIn() {
     };
 
     return (
+
         <div
             className="min-h-screen flex items-center justify-center p-6 transition-colors duration-500 relative overflow-hidden"
             style={{ backgroundColor: colors.bg.primary }}
         >
             {/* Dark Mode Toggle Button - Top Right */}
-            <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="fixed top-6 right-6 z-50 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
-                style={{
-                    backgroundColor: colors.bg.tertiary,
-                    border: `1px solid ${colors.border.subtle}`,
-                    boxShadow: `0 4px 16px ${colors.glow.primary}`
-                }}
-            >
-                {isDarkMode ? (
-                    <Sun className="w-5 h-5" style={{ color: colors.accent.warning }} />
-                ) : (
-                    <Moon className="w-5 h-5" style={{ color: colors.accent.primary }} />
-                )}
-            </button>
+            <ThemeToggleButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode}/>
 
             {/* Animated Background Grid - Faster animation */}
-            <div className="absolute inset-0 opacity-20">
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        backgroundImage: isDarkMode
-                            ? 'linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px)'
-                            : 'linear-gradient(rgba(79, 70, 229, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(79, 70, 229, 0.02) 1px, transparent 1px)',
-                        backgroundSize: '48px 48px',
-                        animation: 'gridMoveFast 12s linear infinite'
-                    }}
-                />
-            </div>
+            <AnimatedGrid isDarkMode={isDarkMode}/>
 
-            {/* Gradient Orbs - Faster pulsing */}
-            <div
-                className="absolute top-20 right-20 w-125 h-125 rounded-full blur-3xl opacity-20 animate-pulse"
-                style={{
-                    background: `radial-gradient(circle, ${colors.accent.primary}, transparent)`,
-                    animationDuration: '2.5s'
-                }}
-            />
-            <div
-                className="absolute bottom-20 left-20 w-125 h-125 rounded-full blur-3xl opacity-20 animate-pulse"
-                style={{
-                    background: `radial-gradient(circle, ${colors.accent.secondary}, transparent)`,
-                    animationDuration: '3.5s',
-                    animationDelay: '0.5s'
-                }}
-            />
 
             {/* Sign In Card */}
             <div
@@ -107,38 +72,7 @@ export default function VoteSecureSignIn() {
                 style={{ animationDelay: '100ms' }}
             >
                 {/* Logo Header */}
-                <div className="text-center mb-8 animate-fadeInDown">
-                    <div className="flex items-center justify-center gap-3 mb-6">
-                        <div
-                            className="w-14 h-14 rounded-xl flex items-center justify-center transform hover:rotate-6 transition-transform duration-300"
-                            style={{
-                                backgroundColor: colors.accent.primary,
-                                boxShadow: `0 12px 32px ${colors.glow.primary}`
-                            }}
-                        >
-                            <Shield className="w-8 h-8 text-white" />
-                        </div>
-                    </div>
-
-                    <h1
-                        className="text-3xl font-bold mb-2"
-                        style={{
-                            fontFamily: "'Sora', sans-serif",
-                            color: colors.text.primary
-                        }}
-                    >
-                        Welcome Back
-                    </h1>
-                    <p
-                        className="text-base"
-                        style={{
-                            color: colors.text.secondary,
-                            fontFamily: "'Inter', sans-serif"
-                        }}
-                    >
-                        Sign in to your VoteSecure account
-                    </p>
-                </div>
+                <Header isDarkMode={isDarkMode}/>
 
                 {/* Main Card */}
                 <div
@@ -156,317 +90,24 @@ export default function VoteSecureSignIn() {
                         style={{ background: colors.accent.primary }}
                     />
 
-                    <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-                        {/* Email Field */}
-                        <div
-                            className="animate-fadeInUp"
-                            style={{ animationDelay: '300ms' }}
-                        >
-                            <label
-                                htmlFor="email"
-                                className="block text-sm font-semibold mb-3"
-                                style={{
-                                    color: colors.text.primary,
-                                    fontFamily: "'Inter', sans-serif"
-                                }}
-                            >
-                                Email Address
-                            </label>
-                            <div className="relative">
-                                <div
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300"
-                                    style={{
-                                        color: focusedField === 'email' ? colors.accent.primary : colors.text.tertiary
-                                    }}
-                                >
-                                    <Mail className="w-5 h-5" />
-                                </div>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    onFocus={() => setFocusedField('email')}
-                                    onBlur={() => setFocusedField(null)}
-                                    placeholder="admin@university.edu"
-                                    className="w-full pl-12 pr-4 py-4 rounded-xl transition-all duration-300 outline-none"
-                                    style={{
-                                        backgroundColor: colors.bg.elevated,
-                                        border: `2px solid ${
-                                            errors.email
-                                                ? colors.accent.danger
-                                                : focusedField === 'email'
-                                                    ? colors.accent.primary
-                                                    : colors.border.subtle
-                                        }`,
-                                        color: colors.text.primary,
-                                        fontFamily: "'Inter', sans-serif",
-                                        boxShadow: focusedField === 'email'
-                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                            : 'none'
-                                    }}
-                                />
-                            </div>
-                            {errors.email && (
-                                <div
-                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                    style={{ color: colors.accent.danger }}
-                                >
-                                    <AlertCircle className="w-4 h-4" />
-                                    <span
-                                        className="text-sm font-medium"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    >
-                                        {errors.email}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
+                    <Form
 
-                        {/* Password Field */}
-                        <div
-                            className="animate-fadeInUp"
-                            style={{ animationDelay: '400ms' }}
-                        >
-                            <label
-                                htmlFor="password"
-                                className="block text-sm font-semibold mb-3"
-                                style={{
-                                    color: colors.text.primary,
-                                    fontFamily: "'Inter', sans-serif"
-                                }}
-                            >
-                                Password
-                            </label>
-                            <div className="relative">
-                                <div
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300"
-                                    style={{
-                                        color: focusedField === 'password' ? colors.accent.primary : colors.text.tertiary
-                                    }}
-                                >
-                                    <Lock className="w-5 h-5" />
-                                </div>
-                                <input
-                                    id="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    onFocus={() => setFocusedField('password')}
-                                    onBlur={() => setFocusedField(null)}
-                                    placeholder="Enter your password"
-                                    className="w-full pl-12 pr-12 py-4 rounded-xl transition-all duration-300 outline-none"
-                                    style={{
-                                        backgroundColor: colors.bg.elevated,
-                                        border: `2px solid ${
-                                            errors.password
-                                                ? colors.accent.danger
-                                                : focusedField === 'password'
-                                                    ? colors.accent.primary
-                                                    : colors.border.subtle
-                                        }`,
-                                        color: colors.text.primary,
-                                        fontFamily: "'Inter', sans-serif",
-                                        boxShadow: focusedField === 'password'
-                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                            : 'none'
-                                    }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-300 hover:scale-110"
-                                    style={{ color: colors.text.tertiary }}
-                                >
-                                    {showPassword ? (
-                                        <EyeOff className="w-5 h-5" />
-                                    ) : (
-                                        <Eye className="w-5 h-5" />
-                                    )}
-                                </button>
-                            </div>
-                            {errors.password && (
-                                <div
-                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                    style={{ color: colors.accent.danger }}
-                                >
-                                    <AlertCircle className="w-4 h-4" />
-                                    <span
-                                        className="text-sm font-medium"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    >
-                                        {errors.password}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
+                        isDarkMode={isDarkMode} handleSubmit={handleSubmit}
+                        focusedField={focusedField} setFocusedField={setFocusedField}
+                        password={password} setPassword={setPassword}
+                        showPassword={showPassword} setShowPassword={setShowPassword}
+                        email={email} setEmail={setEmail}
+                        errors={errors} isLoading={isLoading}
 
-                        {/* Remember Me & Forgot Password */}
-                        <div
-                            className="flex items-center justify-between animate-fadeInUp"
-                            style={{ animationDelay: '500ms' }}
-                        >
-                            <label className="flex items-center gap-2 cursor-pointer group">
-                                <input
-                                    type="checkbox"
-                                    className="w-5 h-5 rounded cursor-pointer transition-all duration-200"
-                                    style={{
-                                        accentColor: colors.accent.primary,
-                                        border: `2px solid ${colors.border.medium}`
-                                    }}
-                                />
-                                <span
-                                    className="text-sm font-medium transition-colors duration-200 group-hover:opacity-80"
-                                    style={{
-                                        color: colors.text.secondary,
-                                        fontFamily: "'Inter', sans-serif"
-                                    }}
-                                >
-                                    Remember me
-                                </span>
-                            </label>
+                    />
 
-                            <a
-                                href="#"
-                                className="text-sm font-semibold transition-all duration-200 hover:opacity-80"
-                                style={{
-                                    color: colors.accent.primary,
-                                    fontFamily: "'Inter', sans-serif"
-                                }}
-                            >
-                                Forgot password?
-                            </a>
-                        </div>
-
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="group w-full py-4 rounded-xl font-bold text-base tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 animate-fadeInUp"
-                            style={{
-                                backgroundColor: colors.accent.primary,
-                                color: '#ffffff',
-                                fontFamily: "'Inter', sans-serif",
-                                boxShadow: `0 12px 32px ${colors.glow.primary}`,
-                                animationDelay: '600ms'
-                            }}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <div
-                                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
-                                    />
-                                    Signing In...
-                                </>
-                            ) : (
-                                <>
-                                    Sign In
-                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                                </>
-                            )}
-                        </button>
-
-                        {/* Divider */}
-                        <div
-                            className="relative my-8 animate-fadeInUp"
-                            style={{ animationDelay: '700ms' }}
-                        >
-                            <div
-                                className="absolute inset-0 flex items-center"
-                            >
-                                <div
-                                    className="w-full border-t"
-                                    style={{ borderColor: colors.border.subtle }}
-                                />
-                            </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span
-                                    className="px-4 text-sm font-medium"
-                                    style={{
-                                        backgroundColor: colors.bg.card,
-                                        color: colors.text.tertiary,
-                                        fontFamily: "'Inter', sans-serif"
-                                    }}
-                                >
-                                    Or continue with
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* SSO Buttons */}
-                        <div
-                            className="grid grid-cols-2 gap-4 animate-fadeInUp"
-                            style={{ animationDelay: '800ms' }}
-                        >
-                            {['Google', 'Microsoft'].map((provider) => (
-                                <button
-                                    key={provider}
-                                    type="button"
-                                    className="py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
-                                    style={{
-                                        backgroundColor: colors.bg.elevated,
-                                        color: colors.text.primary,
-                                        border: `2px solid ${colors.border.medium}`,
-                                        fontFamily: "'Inter', sans-serif"
-                                    }}
-                                >
-                                    <div
-                                        className="w-5 h-5 rounded-full"
-                                        style={{
-                                            backgroundColor: provider === 'Google' ? '#4285f4' : '#00a4ef'
-                                        }}
-                                    />
-                                    {provider}
-                                </button>
-                            ))}
-                        </div>
-                    </form>
                 </div>
 
                 {/* Sign-Up Link */}
-                <div
-                    className="text-center mt-8 animate-fadeInUp"
-                    style={{ animationDelay: '900ms' }}
-                >
-                    <p
-                        className="text-sm"
-                        style={{
-                            color: colors.text.secondary,
-                            fontFamily: "'Inter', sans-serif"
-                        }}
-                    >
-                        Don&#39;t have an account?{' '}
-                        <a
-                            href="#"
-                            className="font-bold transition-all duration-200 hover:opacity-80"
-                            style={{
-                                color: colors.accent.primary
-                            }}
-                        >
-                            Request Access
-                        </a>
-                    </p>
-                </div>
+                <ForewordLink isDarkMode={isDarkMode}/>
 
                 {/* Security Badge */}
-                <div
-                    className="flex items-center justify-center gap-2 mt-8 animate-fadeInUp"
-                    style={{ animationDelay: '1000ms' }}
-                >
-                    <Shield
-                        className="w-4 h-4"
-                        style={{ color: colors.accent.success }}
-                    />
-                    <span
-                        className="text-xs font-medium"
-                        style={{
-                            color: colors.text.tertiary,
-                            fontFamily: "'Inter', sans-serif"
-                        }}
-                    >
-                        Protected by 256-bit encryption
-                    </span>
-                </div>
+                <Security isDarkMode={isDarkMode}/>
             </div>
 
             {/* CSS Animations */}
@@ -514,15 +155,15 @@ export default function VoteSecureSignIn() {
                 }
                 
                 .animate-fadeInDown {
-                    animation: fadeInDown 0.8s ease-out forwards;
+                    animation: fadeInDown 0.5s ease-out forwards;
                 }
                 
                 .animate-fadeInUp {
-                    animation: fadeInUp 0.8s ease-out forwards;
+                    animation: fadeInUp 0.5s ease-out forwards;
                 }
                 
                 .animate-fadeIn {
-                    animation: fadeIn 0.3s ease-out forwards;
+                    animation: fadeIn 0.2s ease-out forwards;
                 }
                 
                 * {
