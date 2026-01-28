@@ -1,21 +1,27 @@
 "use client"
 
 import React, { useState, FormEvent, ChangeEvent } from 'react';
-import {
-    Shield, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, User, Phone, MapPin, Calendar, Upload, CheckCircle,
-} from 'lucide-react';
 import {getColor} from "@/lib/_colors";
 import {ThemeToggleButton} from "@/components/signin/ThemeToggleButton";
 import {Animation} from "@/components/signup/Animation";
 import {Header} from "@/components/signup/Header";
 import {FeatureCard} from "@/components/signup/FeatureCard";
-import Image from 'next/image'
 import {SignUpBadge} from "@/components/signup/Badge";
 import {HeadingText} from "@/components/signup/HeadingText";
 import {MobileLoginForm} from "@/components/signup/MobileLoginForm";
 import {SignUpProgress} from "@/components/signup/SignUpProgress";
 import {SignUpGlow} from "@/components/signup/SignUpGlow";
 import {SignUpFormText} from "@/components/signup/SignUpFormText";
+import {NameField} from "@/components/signup/NameField";
+import {EmailField} from "@/components/signup/EmailField";
+import {PhoneField} from "@/components/signup/PhoneField";
+import {PasswordField} from "@/components/signup/PasswordField";
+import {ConfirmPasswordField} from "@/components/signup/ConfirmPasswordField";
+import {DateOfBirthField} from "@/components/signup/DateOfBirthField";
+import {GenderField} from "@/components/signup/GenderField";
+import {AddressField} from "@/components/signup/AddressField";
+import {ProfileImageUpload} from "@/components/signup/ProfileImageUpload";
+import {NavigationButtons} from "@/components/signup/NavigationButtons";
 
 interface ValidationErrors {
     name?: string;
@@ -192,679 +198,115 @@ export default function VoteSecureSignUp() {
                             <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                                 {/* Step 1: Personal Info */}
                                 {currentStep === 1 && (
-
                                     <>
-                                        {/* Name Field */}
-                                        <div className="animate-fadeInUp" style={{animationDuration: '0.5s'}}>
-                                            <label
-                                                htmlFor="name"
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Full Name
-                                            </label>
-                                            <div className="relative">
-                                                <div
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300"
-                                                    style={{
-                                                        color: focusedField === 'name' ? colors.accent.primary : colors.text.tertiary
-                                                    }}
-                                                >
-                                                    <User className="w-5 h-5"/>
-                                                </div>
-                                                <input
-                                                    id="name"
-                                                    name="name"
-                                                    type="text"
-                                                    value={formData.name}
-                                                    onChange={handleInputChange}
-                                                    onFocus={() => setFocusedField('name')}
-                                                    onBlur={() => setFocusedField(null)}
-                                                    placeholder="John Doe"
-                                                    className="w-full pl-12 pr-4 py-3 rounded-xl transition-all duration-300 outline-none"
-                                                    style={{
-                                                        backgroundColor: colors.bg.elevated,
-                                                        border: `2px solid ${
-                                                            errors.name
-                                                                ? colors.accent.danger
-                                                                : focusedField === 'name'
-                                                                    ? colors.accent.primary
-                                                                    : colors.border.subtle
-                                                        }`,
-                                                        color: colors.text.primary,
-                                                        fontFamily: "'Inter', sans-serif",
-                                                        boxShadow: focusedField === 'name'
-                                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                                            : 'none'
-                                                    }}
-                                                />
-                                            </div>
-                                            {errors.name && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{color: colors.accent.danger}}
-                                                >
-                                                    <AlertCircle className="w-4 h-4"/>
-                                                    <span className="text-sm font-medium" style={{fontFamily: "'Inter', sans-serif"}}>
-                                                        {errors.name}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <NameField
+                                            value={formData.name}
+                                            onChange={handleInputChange}
+                                            onFocus={() => setFocusedField('name')}
+                                            onBlur={() => setFocusedField(null)}
+                                            error={errors.name}
+                                            focusedField={focusedField}
+                                            colors={colors}
+                                        />
 
-                                        {/* Email Field */}
-                                        <div className="animate-fadeInUp" style={{ animationDuration: '0.5s', animationDelay: '0.1s' }}>
-                                            <label
-                                                htmlFor="email"
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Email Address
-                                            </label>
-                                            <div className="relative">
-                                                <div
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300"
-                                                    style={{
-                                                        color: focusedField === 'email' ? colors.accent.primary : colors.text.tertiary
-                                                    }}
-                                                >
-                                                    <Mail className="w-5 h-5" />
-                                                </div>
-                                                <input
-                                                    id="email"
-                                                    name="email"
-                                                    type="email"
-                                                    value={formData.email}
-                                                    onChange={handleInputChange}
-                                                    onFocus={() => setFocusedField('email')}
-                                                    onBlur={() => setFocusedField(null)}
-                                                    placeholder="john@university.edu"
-                                                    className="w-full pl-12 pr-4 py-3 rounded-xl transition-all duration-300 outline-none"
-                                                    style={{
-                                                        backgroundColor: colors.bg.elevated,
-                                                        border: `2px solid ${
-                                                            errors.email
-                                                                ? colors.accent.danger
-                                                                : focusedField === 'email'
-                                                                    ? colors.accent.primary
-                                                                    : colors.border.subtle
-                                                        }`,
-                                                        color: colors.text.primary,
-                                                        fontFamily: "'Inter', sans-serif",
-                                                        boxShadow: focusedField === 'email'
-                                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                                            : 'none'
-                                                    }}
-                                                />
-                                            </div>
-                                            {errors.email && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{ color: colors.accent.danger }}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                    <span className="text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {errors.email}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <EmailField
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            onFocus={() => setFocusedField('email')}
+                                            onBlur={() => setFocusedField(null)}
+                                            error={errors.email}
+                                            focusedField={focusedField}
+                                            colors={colors}
+                                        />
 
-                                        {/* Phone Field */}
-                                        <div className="animate-fadeInUp" style={{ animationDuration: '0.5s', animationDelay: '0.2s' }}>
-                                            <label
-                                                htmlFor="phone"
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Phone Number
-                                            </label>
-                                            <div className="relative">
-                                                <div
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300"
-                                                    style={{
-                                                        color: focusedField === 'phone' ? colors.accent.primary : colors.text.tertiary
-                                                    }}
-                                                >
-                                                    <Phone className="w-5 h-5" />
-                                                </div>
-                                                <input
-                                                    id="phone"
-                                                    name="phone"
-                                                    type="tel"
-                                                    value={formData.phone}
-                                                    onChange={handleInputChange}
-                                                    onFocus={() => setFocusedField('phone')}
-                                                    onBlur={() => setFocusedField(null)}
-                                                    placeholder="+1 (555) 123-4567"
-                                                    className="w-full pl-12 pr-4 py-3 rounded-xl transition-all duration-300 outline-none"
-                                                    style={{
-                                                        backgroundColor: colors.bg.elevated,
-                                                        border: `2px solid ${
-                                                            errors.phone
-                                                                ? colors.accent.danger
-                                                                : focusedField === 'phone'
-                                                                    ? colors.accent.primary
-                                                                    : colors.border.subtle
-                                                        }`,
-                                                        color: colors.text.primary,
-                                                        fontFamily: "'Inter', sans-serif",
-                                                        boxShadow: focusedField === 'phone'
-                                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                                            : 'none'
-                                                    }}
-                                                />
-                                            </div>
-                                            {errors.phone && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{ color: colors.accent.danger }}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                    <span className="text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {errors.phone}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <PhoneField
+                                            value={formData.phone}
+                                            onChange={handleInputChange}
+                                            onFocus={() => setFocusedField('phone')}
+                                            onBlur={() => setFocusedField(null)}
+                                            error={errors.phone}
+                                            focusedField={focusedField}
+                                            colors={colors}
+                                        />
                                     </>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                 )}
 
                                 {/* Step 2: Security */}
                                 {currentStep === 2 && (
                                     <>
-                                        {/* Password Field */}
-                                        <div className="animate-fadeInUp" style={{ animationDuration: '0.5s' }}>
-                                            <label
-                                                htmlFor="password"
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Password
-                                            </label>
-                                            <div className="relative">
-                                                <div
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300"
-                                                    style={{
-                                                        color: focusedField === 'password' ? colors.accent.primary : colors.text.tertiary
-                                                    }}
-                                                >
-                                                    <Lock className="w-5 h-5" />
-                                                </div>
-                                                <input
-                                                    id="password"
-                                                    name="password"
-                                                    type={showPassword ? 'text' : 'password'}
-                                                    value={formData.password}
-                                                    onChange={handleInputChange}
-                                                    onFocus={() => setFocusedField('password')}
-                                                    onBlur={() => setFocusedField(null)}
-                                                    placeholder="Create a strong password"
-                                                    className="w-full pl-12 pr-12 py-3 rounded-xl transition-all duration-300 outline-none"
-                                                    style={{
-                                                        backgroundColor: colors.bg.elevated,
-                                                        border: `2px solid ${
-                                                            errors.password
-                                                                ? colors.accent.danger
-                                                                : focusedField === 'password'
-                                                                    ? colors.accent.primary
-                                                                    : colors.border.subtle
-                                                        }`,
-                                                        color: colors.text.primary,
-                                                        fontFamily: "'Inter', sans-serif",
-                                                        boxShadow: focusedField === 'password'
-                                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                                            : 'none'
-                                                    }}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowPassword(!showPassword)}
-                                                    className="absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-300 hover:scale-110"
-                                                    style={{ color: colors.text.tertiary }}
-                                                >
-                                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                                </button>
-                                            </div>
-                                            {errors.password && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{ color: colors.accent.danger }}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                    <span className="text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {errors.password}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <PasswordField
+                                            value={formData.password}
+                                            onChange={handleInputChange}
+                                            onFocus={() => setFocusedField('password')}
+                                            onBlur={() => setFocusedField(null)}
+                                            error={errors.password}
+                                            focusedField={focusedField}
+                                            showPassword={showPassword}
+                                            setShowPassword={setShowPassword}
+                                            colors={colors}
+                                        />
 
-                                        {/* Confirm Password Field */}
-                                        <div className="animate-fadeInUp" style={{ animationDuration: '0.5s', animationDelay: '0.1s' }}>
-                                            <label
-                                                htmlFor="confirmPassword"
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Confirm Password
-                                            </label>
-                                            <div className="relative">
-                                                <div
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300"
-                                                    style={{
-                                                        color: focusedField === 'confirmPassword' ? colors.accent.primary : colors.text.tertiary
-                                                    }}
-                                                >
-                                                    <Lock className="w-5 h-5" />
-                                                </div>
-                                                <input
-                                                    id="confirmPassword"
-                                                    name="confirmPassword"
-                                                    type={showConfirmPassword ? 'text' : 'password'}
-                                                    value={formData.confirmPassword}
-                                                    onChange={handleInputChange}
-                                                    onFocus={() => setFocusedField('confirmPassword')}
-                                                    onBlur={() => setFocusedField(null)}
-                                                    placeholder="Re-enter your password"
-                                                    className="w-full pl-12 pr-12 py-3 rounded-xl transition-all duration-300 outline-none"
-                                                    style={{
-                                                        backgroundColor: colors.bg.elevated,
-                                                        border: `2px solid ${
-                                                            errors.confirmPassword
-                                                                ? colors.accent.danger
-                                                                : focusedField === 'confirmPassword'
-                                                                    ? colors.accent.primary
-                                                                    : colors.border.subtle
-                                                        }`,
-                                                        color: colors.text.primary,
-                                                        fontFamily: "'Inter', sans-serif",
-                                                        boxShadow: focusedField === 'confirmPassword'
-                                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                                            : 'none'
-                                                    }}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                    className="absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-300 hover:scale-110"
-                                                    style={{ color: colors.text.tertiary }}
-                                                >
-                                                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                                </button>
-                                            </div>
-                                            {errors.confirmPassword && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{ color: colors.accent.danger }}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                    <span className="text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {errors.confirmPassword}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <ConfirmPasswordField
+                                            value={formData.confirmPassword}
+                                            onChange={handleInputChange}
+                                            onFocus={() => setFocusedField('confirmPassword')}
+                                            onBlur={() => setFocusedField(null)}
+                                            error={errors.confirmPassword}
+                                            focusedField={focusedField}
+                                            showConfirmPassword={showConfirmPassword}
+                                            setShowConfirmPassword={setShowConfirmPassword}
+                                            colors={colors}
+                                        />
 
-                                        {/* Date of Birth */}
-                                        <div className="animate-fadeInUp" style={{ animationDuration: '0.5s', animationDelay: '0.2s' }}>
-                                            <label
-                                                htmlFor="dateOfBirth"
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Date of Birth
-                                            </label>
-                                            <div className="relative">
-                                                <div
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300"
-                                                    style={{
-                                                        color: focusedField === 'dateOfBirth' ? colors.accent.primary : colors.text.tertiary
-                                                    }}
-                                                >
-                                                    <Calendar className="w-5 h-5" />
-                                                </div>
-                                                <input
-                                                    id="dateOfBirth"
-                                                    name="dateOfBirth"
-                                                    type="date"
-                                                    value={formData.dateOfBirth}
-                                                    onChange={handleInputChange}
-                                                    onFocus={() => setFocusedField('dateOfBirth')}
-                                                    onBlur={() => setFocusedField(null)}
-                                                    className="w-full pl-12 pr-4 py-3 rounded-xl transition-all duration-300 outline-none"
-                                                    style={{
-                                                        backgroundColor: colors.bg.elevated,
-                                                        border: `2px solid ${
-                                                            errors.dateOfBirth
-                                                                ? colors.accent.danger
-                                                                : focusedField === 'dateOfBirth'
-                                                                    ? colors.accent.primary
-                                                                    : colors.border.subtle
-                                                        }`,
-                                                        color: colors.text.primary,
-                                                        fontFamily: "'Inter', sans-serif",
-                                                        boxShadow: focusedField === 'dateOfBirth'
-                                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                                            : 'none'
-                                                    }}
-                                                />
-                                            </div>
-                                            {errors.dateOfBirth && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{ color: colors.accent.danger }}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                    <span className="text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {errors.dateOfBirth}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <DateOfBirthField
+                                            value={formData.dateOfBirth}
+                                            onChange={handleInputChange}
+                                            onFocus={() => setFocusedField('dateOfBirth')}
+                                            onBlur={() => setFocusedField(null)}
+                                            error={errors.dateOfBirth}
+                                            focusedField={focusedField}
+                                            colors={colors}
+                                        />
 
-                                        {/* Gender */}
-                                        <div className="animate-fadeInUp" style={{ animationDuration: '0.5s', animationDelay: '0.3s' }}>
-                                            <label
-                                                htmlFor="gender"
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Gender
-                                            </label>
-                                            <select
-                                                id="gender"
-                                                name="gender"
-                                                value={formData.gender}
-                                                onChange={handleInputChange}
-                                                className="w-full px-4 py-3 rounded-xl transition-all duration-300 outline-none"
-                                                style={{
-                                                    backgroundColor: colors.bg.elevated,
-                                                    border: `2px solid ${
-                                                        errors.gender
-                                                            ? colors.accent.danger
-                                                            : colors.border.subtle
-                                                    }`,
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                <option value="">Select gender</option>
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
-                                                <option value="other">Other</option>
-                                            </select>
-                                            {errors.gender && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{ color: colors.accent.danger }}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                    <span className="text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {errors.gender}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <GenderField
+                                            value={formData.gender}
+                                            onChange={handleInputChange}
+                                            error={errors.gender}
+                                            colors={colors}
+                                        />
                                     </>
                                 )}
 
                                 {/* Step 3: Additional Info */}
                                 {currentStep === 3 && (
                                     <>
-                                        {/* Address Field */}
-                                        <div className="animate-fadeInUp" style={{ animationDuration: '0.5s' }}>
-                                            <label
-                                                htmlFor="address"
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Address
-                                            </label>
-                                            <div className="relative">
-                                                <div
-                                                    className="absolute left-4 top-4 transition-all duration-300"
-                                                    style={{
-                                                        color: focusedField === 'address' ? colors.accent.primary : colors.text.tertiary
-                                                    }}
-                                                >
-                                                    <MapPin className="w-5 h-5" />
-                                                </div>
-                                                <textarea
-                                                    id="address"
-                                                    name="address"
-                                                    value={formData.address}
-                                                    onChange={handleInputChange}
-                                                    onFocus={() => setFocusedField('address')}
-                                                    onBlur={() => setFocusedField(null)}
-                                                    placeholder="123 Main St, City, State, ZIP"
-                                                    rows={3}
-                                                    className="w-full pl-12 pr-4 py-3 rounded-xl transition-all duration-300 outline-none resize-none"
-                                                    style={{
-                                                        backgroundColor: colors.bg.elevated,
-                                                        border: `2px solid ${
-                                                            errors.address
-                                                                ? colors.accent.danger
-                                                                : focusedField === 'address'
-                                                                    ? colors.accent.primary
-                                                                    : colors.border.subtle
-                                                        }`,
-                                                        color: colors.text.primary,
-                                                        fontFamily: "'Inter', sans-serif",
-                                                        boxShadow: focusedField === 'address'
-                                                            ? `0 0 0 4px ${colors.glow.primary}`
-                                                            : 'none'
-                                                    }}
-                                                />
-                                            </div>
-                                            {errors.address && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{ color: colors.accent.danger }}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                    <span className="text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {errors.address}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <AddressField
+                                            value={formData.address}
+                                            onChange={handleInputChange}
+                                            onFocus={() => setFocusedField('address')}
+                                            onBlur={() => setFocusedField(null)}
+                                            error={errors.address}
+                                            focusedField={focusedField}
+                                            colors={colors}
+                                        />
 
-                                        {/* Profile Image Upload */}
-                                        <div className="animate-fadeInUp" style={{ animationDuration: '0.5s', animationDelay: '0.1s' }}>
-                                            <label
-                                                className="block text-sm font-semibold mb-2"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Profile Picture (Optional)
-                                            </label>
-                                            <div
-                                                className="relative border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 hover:scale-[1.02] cursor-pointer"
-                                                style={{
-                                                    backgroundColor: colors.bg.elevated,
-                                                    borderColor: errors.profileImage ? colors.accent.danger : colors.border.medium
-                                                }}
-                                            >
-                                                <input
-                                                    id="profileImage"
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={handleImageChange}
-                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                                />
-                                                {imagePreview ? (
-                                                    <div className="flex flex-col items-center gap-3">
-                                                        <Image
-                                                            src={imagePreview}
-                                                            alt="Preview"
-                                                            className="w-24 h-24 rounded-full object-cover"
-                                                            style={{
-                                                                border: `3px solid ${colors.accent.primary}`
-                                                            }}
-                                                        />
-                                                        <p
-                                                            className="text-sm font-medium"
-                                                            style={{
-                                                                color: colors.text.secondary,
-                                                                fontFamily: "'Inter', sans-serif"
-                                                            }}
-                                                        >
-                                                            Click to change image
-                                                        </p>
-                                                    </div>
-                                                ) : (
-                                                    <div className="flex flex-col items-center gap-3">
-                                                        <div
-                                                            className="w-16 h-16 rounded-full flex items-center justify-center"
-                                                            style={{
-                                                                backgroundColor: colors.bg.tertiary
-                                                            }}
-                                                        >
-                                                            <Upload className="w-8 h-8" style={{ color: colors.text.tertiary }} />
-                                                        </div>
-                                                        <div>
-                                                            <p
-                                                                className="text-sm font-medium mb-1"
-                                                                style={{
-                                                                    color: colors.text.primary,
-                                                                    fontFamily: "'Inter', sans-serif"
-                                                                }}
-                                                            >
-                                                                Click to upload or drag and drop
-                                                            </p>
-                                                            <p
-                                                                className="text-xs"
-                                                                style={{
-                                                                    color: colors.text.tertiary,
-                                                                    fontFamily: "'Inter', sans-serif"
-                                                                }}
-                                                            >
-                                                                PNG, JPG up to 5MB
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            {errors.profileImage && (
-                                                <div
-                                                    className="flex items-center gap-2 mt-2 animate-fadeIn"
-                                                    style={{ color: colors.accent.danger }}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                    <span className="text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {errors.profileImage}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <ProfileImageUpload
+                                            imagePreview={imagePreview}
+                                            onChange={handleImageChange}
+                                            error={errors.profileImage}
+                                            colors={colors}
+                                        />
                                     </>
                                 )}
 
                                 {/* Navigation Buttons */}
-                                <div className="flex gap-4 pt-4">
-                                    {currentStep > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setCurrentStep(prev => prev - 1)}
-                                            className="px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:scale-105"
-                                            style={{
-                                                backgroundColor: colors.bg.elevated,
-                                                color: colors.text.primary,
-                                                border: `2px solid ${colors.border.medium}`,
-                                                fontFamily: "'Inter', sans-serif"
-                                            }}
-                                        >
-                                            Back
-                                        </button>
-                                    )}
-
-                                    {currentStep < 3 ? (
-                                        <button
-                                            type="button"
-                                            onClick={handleNext}
-                                            className="group flex-1 py-3 rounded-xl font-bold text-base tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-2xl flex items-center justify-center gap-3"
-                                            style={{
-                                                backgroundColor: colors.accent.primary,
-                                                color: '#ffffff',
-                                                fontFamily: "'Inter', sans-serif",
-                                                boxShadow: `0 12px 32px ${colors.glow.primary}`
-                                            }}
-                                        >
-                                            Continue
-                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                                        </button>
-                                    ) : (
-                                        <button
-                                            type="submit"
-                                            disabled={isLoading}
-                                            className="group flex-1 py-3 rounded-xl font-bold text-base tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3"
-                                            style={{
-                                                backgroundColor: colors.accent.primary,
-                                                color: '#ffffff',
-                                                fontFamily: "'Inter', sans-serif",
-                                                boxShadow: `0 12px 32px ${colors.glow.primary}`
-                                            }}
-                                        >
-                                            {isLoading ? (
-                                                <>
-                                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                                    Creating Account...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    Create Account
-                                                    <CheckCircle className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                                                </>
-                                            )}
-                                        </button>
-                                    )}
-                                </div>
+                                <NavigationButtons
+                                    currentStep={currentStep}
+                                    isLoading={isLoading}
+                                    onBack={() => setCurrentStep(prev => prev - 1)}
+                                    onNext={handleNext}
+                                    colors={colors}
+                                />
                             </form>
                         </div>
 
