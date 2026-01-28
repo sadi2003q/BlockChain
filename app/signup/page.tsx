@@ -22,24 +22,13 @@ import {GenderField} from "@/components/signup/GenderField";
 import {AddressField} from "@/components/signup/AddressField";
 import {ProfileImageUpload} from "@/components/signup/ProfileImageUpload";
 import {NavigationButtons} from "@/components/signup/NavigationButtons";
+import {ForewordLink_SignIn} from "@/components/signup/ForewordLink_SignIn";
+import {ValidationErrors, FocusedField, GenderType} from "@/lib/Schema_Lib/signup.schema";
 
-interface ValidationErrors {
-    name?: string;
-    email?: string;
-    phone?: string;
-    password?: string;
-    confirmPassword?: string;
-    dateOfBirth?: string;
-    gender?: string;
-    address?: string;
-    profileImage?: string;
-}
-
-export type FocusedField = 'name' | 'email' | 'phone' | 'password' | 'confirmPassword' | 'dateOfBirth' | 'address' | null;
-
-export type GenderType = 'male' | 'female' | 'other' | '';
 
 export default function VoteSecureSignUp() {
+
+
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [formData, setFormData] = useState({
@@ -59,6 +48,8 @@ export default function VoteSecureSignUp() {
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [focusedField, setFocusedField] = useState<FocusedField>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+
 
     // Color system matching the landing page
     const colors = getColor(isDarkMode)
@@ -311,26 +302,7 @@ export default function VoteSecureSignUp() {
                         </div>
 
                         {/* Sign In Link */}
-                        <div className="text-center mt-6">
-                            <p
-                                className="text-sm"
-                                style={{
-                                    color: colors.text.secondary,
-                                    fontFamily: "'Inter', sans-serif"
-                                }}
-                            >
-                                Already have an account?{' '}
-                                <a
-                                    href="#"
-                                    className="font-bold transition-all duration-200 hover:opacity-80"
-                                    style={{
-                                        color: colors.accent.primary
-                                    }}
-                                >
-                                    Sign In
-                                </a>
-                            </p>
-                        </div>
+                        <ForewordLink_SignIn isDarkMode={isDarkMode}/>
                     </div>
                 </div>
             </div>
