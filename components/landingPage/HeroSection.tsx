@@ -2,6 +2,8 @@ import {ArrowRight, Key, Play, Shield, Zap} from "lucide-react";
 import React from "react";
 import {getColor} from "@/lib/_colors";
 
+import { LucideIcon } from 'lucide-react';
+
 type IHeroSection = {
     isDarkMode: boolean
 }
@@ -10,6 +12,40 @@ type IHeroSection = {
 export const HeroSection = (
     {isDarkMode}: IHeroSection
 ) => {
+
+    type AccentColor = 'primary' | 'secondary';
+
+    const benefits:{
+        icon: LucideIcon,
+        title: string,
+        desc: string,
+        delay: string,
+        color: AccentColor
+    }[] = [
+        {
+            icon: Shield,
+            title: 'Zero-Knowledge Privacy',
+            desc: "We don't just hide votes; we ensure they can never be linked to an identity.",
+            delay: '300ms',
+            color: 'primary'
+        },
+        {
+            icon: Zap,
+            title: 'Instant Verification',
+            desc: 'Get audit-ready, real-time results the second polls close.',
+            delay: '400ms',
+            color: 'secondary'
+        },
+        {
+            icon: Key,
+            title: 'Role-Based Control',
+            desc: 'Manage candidates, voters, and approvals with granular, military-grade permissions.',
+            delay: '500ms',
+            color: 'primary'
+        }
+    ]
+
+
 
     const colors = getColor(isDarkMode);
 
@@ -30,13 +66,13 @@ export const HeroSection = (
             </div>
 
             {/* Gradient Orbs */}
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-20 animate-pulse"
+            <div className="absolute top-0 right-0 w-150 h-150 rounded-full blur-3xl opacity-20 animate-pulse"
                  style={{
                      background: `radial-gradient(circle, ${colors.accent.primary}, transparent)`,
                      animationDuration: '4s'
                  }}
             />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full blur-3xl opacity-20 animate-pulse"
+            <div className="absolute bottom-0 left-0 w-125 h-125 rounded-full blur-3xl opacity-20 animate-pulse"
                  style={{
                      background: `radial-gradient(circle, ${colors.accent.secondary}, transparent)`,
                      animationDuration: '6s',
@@ -99,7 +135,7 @@ export const HeroSection = (
                             animationDelay: '200ms'
                         }}
                     >
-                        Stop the whispers of "rigged" results. Conduct secure, institutional-grade
+                        Stop the whispers of &#34;rigged&#34; results. Conduct secure, institutional-grade
                         elections with the only platform that makes voter traceability{' '}
                         <span style={{ color: colors.text.primary, fontWeight: 600 }}>
                 mathematically impossible
@@ -108,29 +144,7 @@ export const HeroSection = (
 
                     {/* Key Benefits */}
                     <div className="grid md:grid-cols-3 gap-6 mb-12">
-                        {[
-                            {
-                                icon: Shield,
-                                title: 'Zero-Knowledge Privacy',
-                                desc: "We don't just hide votes; we ensure they can never be linked to an identity.",
-                                delay: '300ms',
-                                color: 'primary'
-                            },
-                            {
-                                icon: Zap,
-                                title: 'Instant Verification',
-                                desc: 'Get audit-ready, real-time results the second polls close.',
-                                delay: '400ms',
-                                color: 'secondary'
-                            },
-                            {
-                                icon: Key,
-                                title: 'Role-Based Control',
-                                desc: 'Manage candidates, voters, and approvals with granular, military-grade permissions.',
-                                delay: '500ms',
-                                color: 'primary'
-                            }
-                        ].map((benefit, i) => (
+                        {benefits.map((benefit, i) => (
                             <div
                                 key={i}
                                 className="group p-6 rounded-2xl transition-all duration-500 hover:scale-105 animate-fadeInUp cursor-pointer"

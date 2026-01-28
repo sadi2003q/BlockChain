@@ -4,7 +4,7 @@ import {getColor} from "@/lib/_colors";
 type IFAQ = {
     isDarkMode: boolean;
     isVisible(
-        section,
+        section: string,
     ): boolean
 }
 
@@ -76,7 +76,7 @@ export const FAQ = (
                                 style={{ fontFamily: "'Sora', sans-serif", color: colors.text.primary }}
                             >
                                 <div
-                                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                                     style={{
                                         backgroundColor: colors.accent.primary
                                     }}

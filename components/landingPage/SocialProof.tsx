@@ -6,7 +6,7 @@ import {getColor} from "@/lib/_colors";
 type ISocialProof = {
     isDarkMode: boolean
     isVisible(
-        section,
+        section: string,
     ): boolean
 }
 
@@ -43,7 +43,7 @@ export const SocialProof = (
                             className="absolute top-8 right-8 text-9xl opacity-5 font-serif"
                             style={{ color: colors.accent.primary }}
                         >
-                            "
+                            &#34;
                         </div>
 
                         <div className="relative z-10">
@@ -51,9 +51,9 @@ export const SocialProof = (
                                 className="text-2xl lg:text-3xl font-medium mb-8 leading-relaxed italic"
                                 style={{ color: colors.text.primary, fontFamily: "'Inter', sans-serif" }}
                             >
-                                "VoteSecure turned our three-day manual tally into a 5-minute automated success.
-                                The 'Zero-Trace' guarantee was the only way we could get our faculty senate to
-                                agree to a digital transition."
+                                &#34;VoteSecure turned our three-day manual tally into a 5-minute automated success.
+                                The &#39;Zero-Trace&#39; guarantee was the only way we could get our faculty senate to
+                                agree to a digital transition.&#34;
                             </p>
 
                             <div className="flex items-center gap-4">

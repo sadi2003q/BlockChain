@@ -1,19 +1,41 @@
 import {Moon, Shield, Sun} from "lucide-react";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getColor} from "@/lib/_colors";
 
 type INavigationBar = {
     isDarkMode: boolean;
     setIsDarkMode: (isDarkMode: boolean) => void;
+    setVisibleSections: React.Dispatch<React.SetStateAction<Set<unknown>>>
+
 }
 
 export const NavigationBar = (
-    {isDarkMode, setIsDarkMode}: INavigationBar
+    {isDarkMode, setIsDarkMode, setVisibleSections}: INavigationBar
 ) => {
 
     const colors = getColor(isDarkMode);
 
-    const [isScrolled, ] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+
+            // Intersection observer for scroll animations
+            const sections = document.querySelectorAll<HTMLElement>('[data-animate]');
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.8) {
+                    setVisibleSections(prev => new Set([...prev, section.dataset.animate!]));
+                }
+            });
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
         <nav

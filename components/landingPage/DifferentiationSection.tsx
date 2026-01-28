@@ -5,7 +5,7 @@ import {getColor} from "@/lib/_colors";
 type IDifferentiationSection = {
     isDarkMode: boolean,
     isVisible(
-        section,
+        section: string,
     ): boolean
 }
 

@@ -4,7 +4,7 @@ import {getColor} from "@/lib/_colors";
 
 type ICTA = {
     isVisible(
-        section,
+        section: string,
     ): boolean
     isDarkMode: boolean
 }

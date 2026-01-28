@@ -4,7 +4,7 @@ import {getColor} from "@/lib/_colors";
 
 type IProblem = {
     isVisible(
-        section,
+        section: string,
     ): boolean
     isDarkMode: boolean
 }
@@ -65,8 +65,8 @@ export const Problem = (
                             style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
                         >
                             Manual counting is a liability. Basic digital forms are a security nightmare.
-                            When a single "leaked" ballot or a delayed tally can trigger a campus-wide crisis,
-                            you can't afford a system that leaves a paper trail.
+                            When a single &#34;leaked&#34; ballot or a delayed tally can trigger a campus-wide crisis,
+                            you can&#39;t afford a system that leaves a paper trail.
                         </p>
                     </div>
 

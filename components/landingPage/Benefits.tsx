@@ -1,12 +1,14 @@
 import {CheckCircle, Lock, Users, Zap} from "lucide-react";
 import React from "react";
 import {getColor} from "@/lib/_colors";
+import type { LucideIcon } from 'lucide-react';
+
 
 
 type IBenefits = {
     isDarkMode: boolean;
     isVisible(
-        section,
+        section: string,
     ): boolean
 }
 
@@ -15,6 +17,54 @@ export const Benefits = (
 ) => {
 
     const colors = getColor(isDarkMode);
+
+    type AccentColor = 'primary' | 'secondary';
+    const features: {
+        icon: LucideIcon;
+        title: string;
+        tech: string;
+        desc: string;
+        benefit: string;
+        delay: string;
+        color: AccentColor;
+    }[] = [
+        {
+            icon: Lock,
+            title: 'Mathematical Anonymity',
+            tech: 'Zero-Knowledge Proofs (P vs V)',
+            desc: 'Uses Zero-Knowledge Proofs to verify a vote is valid without revealing the voter\'s identity.',
+            benefit: 'Eliminate the fear of retaliation and ensure 100% honest turnout.',
+            delay: '0ms',
+            color: 'primary'
+        },
+        {
+            icon: CheckCircle,
+            title: 'Real-Time Audit Trail',
+            tech: 'Tamper-Proof Ledger',
+            desc: 'Watch the tally live with a tamper-proof ledger. No "black box" counting.',
+            benefit: 'No 48-hour delays. Complete transparency from start to finish.',
+            delay: '100ms',
+            color: 'secondary'
+        },
+        {
+            icon: Users,
+            title: 'Native Role-Based Access',
+            tech: 'Granular Permission System',
+            desc: 'Separate the "Admin" from the "Observer." Ensure the right people approve candidates.',
+            benefit: 'The system handles counting while you maintain control.',
+            delay: '200ms',
+            color: 'primary'
+        },
+        {
+            icon: Zap,
+            title: 'Deployment in < 15 Minutes',
+            tech: 'Zero-Code Platform',
+            desc: 'Go from a blank page to a live election in minutes. No code, no IT tickets.',
+            benefit: 'Focus on governance, not technical implementation.',
+            delay: '300ms',
+            color: 'secondary'
+        }
+    ]
 
     return (
         <section
@@ -66,44 +116,7 @@ export const Benefits = (
 
                 {/* Feature Blocks */}
                 <div className="grid md:grid-cols-2 gap-8">
-                    {[
-                        {
-                            icon: Lock,
-                            title: 'Mathematical Anonymity',
-                            tech: 'Zero-Knowledge Proofs (P vs V)',
-                            desc: 'Uses Zero-Knowledge Proofs to verify a vote is valid without revealing the voter\'s identity.',
-                            benefit: 'Eliminate the fear of retaliation and ensure 100% honest turnout.',
-                            delay: '0ms',
-                            color: 'primary'
-                        },
-                        {
-                            icon: CheckCircle,
-                            title: 'Real-Time Audit Trail',
-                            tech: 'Tamper-Proof Ledger',
-                            desc: 'Watch the tally live with a tamper-proof ledger. No "black box" counting.',
-                            benefit: 'No 48-hour delays. Complete transparency from start to finish.',
-                            delay: '100ms',
-                            color: 'secondary'
-                        },
-                        {
-                            icon: Users,
-                            title: 'Native Role-Based Access',
-                            tech: 'Granular Permission System',
-                            desc: 'Separate the "Admin" from the "Observer." Ensure the right people approve candidates.',
-                            benefit: 'The system handles counting while you maintain control.',
-                            delay: '200ms',
-                            color: 'primary'
-                        },
-                        {
-                            icon: Zap,
-                            title: 'Deployment in < 15 Minutes',
-                            tech: 'Zero-Code Platform',
-                            desc: 'Go from a blank page to a live election in minutes. No code, no IT tickets.',
-                            benefit: 'Focus on governance, not technical implementation.',
-                            delay: '300ms',
-                            color: 'secondary'
-                        }
-                    ].map((feature, i) => (
+                    {features.map((feature, i) => (
                         <div
                             key={i}
                             className={`group p-8 rounded-2xl transition-all duration-1000 hover:scale-[1.02] ${
@@ -118,7 +131,7 @@ export const Benefits = (
                         >
                             <div className="flex items-start gap-6">
                                 <div
-                                    className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:rotate-6"
+                                    className="w-16 h-16 rounded-xl flex items-center justify-center flex-0 transition-transform duration-300 group-hover:rotate-6"
                                     style={{
                                         backgroundColor: colors.accent[feature.color],
                                         boxShadow: `0 8px 24px ${feature.color === 'secondary' ? colors.glow.secondary : colors.glow.primary}`
@@ -162,7 +175,7 @@ export const Benefits = (
                                     >
                                         <div className="flex items-start gap-2">
                                             <CheckCircle
-                                                className="w-5 h-5 flex-shrink-0 mt-0.5"
+                                                className="w-5 h-5 flex-0 mt-0.5"
                                                 style={{ color: colors.accent.success }}
                                             />
                                             <p
