@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import {
     Shield,
     Moon,
@@ -8,7 +8,6 @@ import {
     Bell,
     User,
     Calendar as CalendarIcon,
-    TrendingUp,
     CheckCircle,
     Clock,
     Users,
@@ -20,182 +19,61 @@ import {
     AlertCircle,
     Award
 } from 'lucide-react';
+import {getColor} from "@/lib/_colors";
+import {
+    CalendarEvent,
+    Election,
+    ElectionStatus,
+    ResultSummary,
+    _calendarEvents,
+    _elections,
+    _recentResults
+} from "@/lib/Schema_Lib/dashboard.schema";
+import {AnimatedBackground} from "@/components/dashboard/AnimatedBackground";
 
-interface Election {
-    id: string;
-    title: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    status: 'running' | 'upcoming' | 'completed';
-    totalVotes: number;
-    totalVoters: number;
-    category: string;
-}
-
-interface CalendarEvent {
-    id: string;
-    title: string;
-    date: string;
-    time: string;
-    type: 'election' | 'deadline' | 'result';
-}
-
-interface ResultSummary {
-    electionTitle: string;
-    winner: string;
-    totalVotes: number;
-    winPercentage: number;
-    date: string;
-}
 
 export default function VoteSecureDashboard() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
-    const [notificationCount, setNotificationCount] = useState<number>(3);
     const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
 
+
+    const [notificationCount, setNotificationCount] = useState<number>(3);
+    const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(_calendarEvents);
+    const [elections, setElections] = useState<Election[]>(_elections);
+    const [recentResults, setRecentResults] = useState<ResultSummary[]>(_recentResults);
+
+
     // Color system matching the landing page
-    const colors = {
-        bg: {
-            primary: isDarkMode ? '#0a0a0a' : '#f3e9dc',
-            secondary: isDarkMode ? '#141414' : '#ede3d6',
-            tertiary: isDarkMode ? '#1e1e1e' : '#e7ddd0',
-            card: isDarkMode ? '#1a1a1a' : '#f9f0e3',
-            elevated: isDarkMode ? '#242424' : '#fdf5e8',
-        },
+    const colors = getColor(isDarkMode);
 
-        text: {
-            primary: isDarkMode ? '#ffffff' : '#1a1a1a',
-            secondary: isDarkMode ? '#d4d4d4' : '#4a4a4a',
-            tertiary: isDarkMode ? '#a3a3a3' : '#6a6a6a',
-            muted: isDarkMode ? '#737373' : '#8a8a8a',
-        },
 
-        accent: {
-            primary: isDarkMode ? '#dc2626' : '#780116',
-            secondary: isDarkMode ? '#f59e0b' : '#2563eb',
-            success: isDarkMode ? '#22c55e' : '#16a34a',
-            warning: isDarkMode ? '#f59e0b' : '#d97706',
-            danger: isDarkMode ? '#ef4444' : '#780116',
-        },
-
-        border: {
-            subtle: isDarkMode ? '#262626' : '#d4c9bd',
-            medium: isDarkMode ? '#404040' : '#c4b9ad',
-            strong: isDarkMode ? '#525252' : '#b4a99d',
-        },
-
-        glow: {
-            primary: isDarkMode
-                ? 'rgba(220, 38, 38, 0.25)'
-                : 'rgba(120, 1, 22, 0.15)',
-            secondary: isDarkMode
-                ? 'rgba(245, 158, 11, 0.2)'
-                : 'rgba(37, 99, 235, 0.08)',
-        },
-    };
-
-    // Mock data
-    const elections: Election[] = [
-        {
-            id: '1',
-            title: 'Student Council President 2024',
-            description: 'Annual election for student body president',
-            startDate: '2024-02-01',
-            endDate: '2024-02-15',
-            status: 'running',
-            totalVotes: 1247,
-            totalVoters: 2500,
-            category: 'Student Government'
-        },
-        {
-            id: '2',
-            title: 'Faculty Senate Representative',
-            description: 'Elect representatives for the faculty senate',
-            startDate: '2024-02-20',
-            endDate: '2024-03-05',
-            status: 'upcoming',
-            totalVotes: 0,
-            totalVoters: 450,
-            category: 'Faculty'
-        },
-        {
-            id: '3',
-            title: 'Department Head - Computer Science',
-            description: 'Selection of new CS department head',
-            startDate: '2024-03-10',
-            endDate: '2024-03-20',
-            status: 'upcoming',
-            totalVotes: 0,
-            totalVoters: 89,
-            category: 'Administration'
-        }
-    ];
-
-    const calendarEvents: CalendarEvent[] = [
-        {
-            id: '1',
-            title: 'Student Council Voting Ends',
-            date: 'Feb 15',
-            time: '11:59 PM',
-            type: 'deadline'
-        },
-        {
-            id: '2',
-            title: 'Faculty Senate Voting Begins',
-            date: 'Feb 20',
-            time: '9:00 AM',
-            type: 'election'
-        },
-        {
-            id: '3',
-            title: 'CS Dept Head Results',
-            date: 'Mar 21',
-            time: '2:00 PM',
-            type: 'result'
-        }
-    ];
-
-    const recentResults: ResultSummary[] = [
-        {
-            electionTitle: 'Class Representative 2024',
-            winner: 'Sarah Johnson',
-            totalVotes: 892,
-            winPercentage: 58.3,
-            date: 'Jan 28, 2024'
-        },
-        {
-            electionTitle: 'Club President - Tech Club',
-            winner: 'Michael Chen',
-            totalVotes: 234,
-            winPercentage: 67.2,
-            date: 'Jan 25, 2024'
-        }
-    ];
-
-    const getStatusColor = (status: string) => {
+    const getStatusColor = (status: ElectionStatus) => {
         switch (status) {
-            case 'running':
+            case 'ONGOING':
                 return colors.accent.success;
-            case 'upcoming':
+            case 'UPCOMING':
                 return colors.accent.secondary;
-            case 'completed':
+            case 'COMPLETED':
                 return colors.text.tertiary;
+            case 'CANCELLED':
+                return colors.accent.danger;
             default:
                 return colors.text.tertiary;
         }
     };
 
-    const getStatusIcon = (status: string) => {
+    const getStatusIcon = (status: ElectionStatus) => {
         switch (status) {
-            case 'running':
-                return <Vote className="w-4 h-4" />;
-            case 'upcoming':
-                return <Clock className="w-4 h-4" />;
-            case 'completed':
-                return <CheckCircle className="w-4 h-4" />;
+            case 'ONGOING':
+                return <Vote className="w-4 h-4"/>;
+            case 'UPCOMING':
+                return <Clock className="w-4 h-4"/>;
+            case 'COMPLETED':
+                return <CheckCircle className="w-4 h-4"/>;
+            case 'CANCELLED':
+                return <AlertCircle className="w-4 h-4"/>;
             default:
-                return <Clock className="w-4 h-4" />;
+                return <Clock className="w-4 h-4"/>;
         }
     };
 
@@ -215,30 +93,12 @@ export default function VoteSecureDashboard() {
     return (
         <div
             className="min-h-screen transition-colors duration-500 relative overflow-hidden"
-            style={{ backgroundColor: colors.bg.primary }}
+            style={{backgroundColor: colors.bg.primary}}
         >
             {/* Animated Background Grid - Faster */}
-            <div className="fixed inset-0 opacity-20 pointer-events-none">
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        backgroundImage: isDarkMode
-                            ? 'linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px)'
-                            : 'linear-gradient(rgba(79, 70, 229, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(79, 70, 229, 0.02) 1px, transparent 1px)',
-                        backgroundSize: '40px 40px',
-                        animation: 'gridMoveFast 10s linear infinite'
-                    }}
-                />
-            </div>
+            <AnimatedBackground isDarkMode={isDarkMode}/>
 
-            {/* Gradient Orbs */}
-            <div
-                className="fixed top-0 right-0 w-[500px] h-[500px] rounded-full blur-3xl opacity-10 animate-pulse pointer-events-none"
-                style={{
-                    background: `radial-gradient(circle, ${colors.accent.primary}, transparent)`,
-                    animationDuration: '3s'
-                }}
-            />
+
 
             {/* Header / Navigation */}
             <header
@@ -259,7 +119,7 @@ export default function VoteSecureDashboard() {
                                     boxShadow: `0 8px 24px ${colors.glow.primary}`
                                 }}
                             >
-                                <Shield className="w-6 h-6 text-white" />
+                                <Shield className="w-6 h-6 text-white"/>
                             </div>
                             <div>
                                 <span
@@ -295,9 +155,9 @@ export default function VoteSecureDashboard() {
                                 }}
                             >
                                 {isDarkMode ? (
-                                    <Sun className="w-5 h-5" style={{ color: colors.accent.warning }} />
+                                    <Sun className="w-5 h-5" style={{color: colors.accent.warning}}/>
                                 ) : (
-                                    <Moon className="w-5 h-5" style={{ color: colors.accent.primary }} />
+                                    <Moon className="w-5 h-5" style={{color: colors.accent.primary}}/>
                                 )}
                             </button>
 
@@ -309,7 +169,7 @@ export default function VoteSecureDashboard() {
                                     border: `1px solid ${colors.border.subtle}`
                                 }}
                             >
-                                <Bell className="w-5 h-5" style={{ color: colors.text.secondary }} />
+                                <Bell className="w-5 h-5" style={{color: colors.text.secondary}}/>
                                 {notificationCount > 0 && (
                                     <span
                                         className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
@@ -333,7 +193,7 @@ export default function VoteSecureDashboard() {
                                         boxShadow: `0 4px 16px ${colors.glow.primary}`
                                     }}
                                 >
-                                    <User className="w-5 h-5 text-white" />
+                                    <User className="w-5 h-5 text-white"/>
                                 </button>
 
                                 {/* Profile Dropdown */}
@@ -347,7 +207,7 @@ export default function VoteSecureDashboard() {
                                     >
                                         <div
                                             className="px-4 py-3 border-b"
-                                            style={{ borderColor: colors.border.subtle }}
+                                            style={{borderColor: colors.border.subtle}}
                                         >
                                             <p
                                                 className="text-sm font-bold"
@@ -370,9 +230,18 @@ export default function VoteSecureDashboard() {
                                         </div>
                                         <div className="py-2">
                                             {[
-                                                { icon: User, label: 'Profile', action: () => {} },
-                                                { icon: Settings, label: 'Settings', action: () => {} },
-                                                { icon: LogOut, label: 'Sign Out', action: () => {} }
+                                                {
+                                                    icon: User, label: 'Profile', action: () => {
+                                                    }
+                                                },
+                                                {
+                                                    icon: Settings, label: 'Settings', action: () => {
+                                                    }
+                                                },
+                                                {
+                                                    icon: LogOut, label: 'Sign Out', action: () => {
+                                                    }
+                                                }
                                             ].map((item, i) => (
                                                 <button
                                                     key={i}
@@ -389,7 +258,7 @@ export default function VoteSecureDashboard() {
                                                         e.currentTarget.style.backgroundColor = 'transparent';
                                                     }}
                                                 >
-                                                    <item.icon className="w-4 h-4" />
+                                                    <item.icon className="w-4 h-4"/>
                                                     <span className="text-sm">{item.label}</span>
                                                 </button>
                                             ))}
@@ -401,6 +270,26 @@ export default function VoteSecureDashboard() {
                     </div>
                 </div>
             </header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-6 lg:px-8 py-8 relative z-10">
@@ -459,7 +348,7 @@ export default function VoteSecureDashboard() {
                                     }}
                                 >
                                     View All
-                                    <ChevronRight className="w-4 h-4" />
+                                    <ChevronRight className="w-4 h-4"/>
                                 </button>
                             </div>
 
@@ -504,8 +393,14 @@ export default function VoteSecureDashboard() {
                                                             fontFamily: "'Inter', sans-serif"
                                                         }}
                                                     >
-                                                        <CalendarIcon className="w-3 h-3" />
-                                                        {election.startDate} - {election.endDate}
+                                                        <CalendarIcon className="w-3 h-3"/>
+                                                        {election.startDate.toLocaleDateString('en-US', {
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })} - {election.endDate.toLocaleDateString('en-US', {
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    })}
                                                     </span>
                                                     <span
                                                         className="flex items-center gap-1"
@@ -514,7 +409,7 @@ export default function VoteSecureDashboard() {
                                                             fontFamily: "'Inter', sans-serif"
                                                         }}
                                                     >
-                                                        <Users className="w-3 h-3" />
+                                                        <Users className="w-3 h-3"/>
                                                         {election.totalVoters} eligible voters
                                                     </span>
                                                 </div>
@@ -529,11 +424,11 @@ export default function VoteSecureDashboard() {
                                                 }}
                                             >
                                                 {getStatusIcon(election.status)}
-                                                {election.status.charAt(0).toUpperCase() + election.status.slice(1)}
+                                                {election.status === 'ONGOING' ? 'Running' : election.status.charAt(0) + election.status.slice(1).toLowerCase()}
                                             </div>
                                         </div>
 
-                                        {election.status === 'running' && (
+                                        {election.status === 'ONGOING' && (
                                             <>
                                                 {/* Progress Bar */}
                                                 <div className="mb-3">
@@ -553,17 +448,17 @@ export default function VoteSecureDashboard() {
                                                                 fontFamily: "'Inter', sans-serif"
                                                             }}
                                                         >
-                                                            {Math.round((election.totalVotes / election.totalVoters) * 100)}%
+                                                            {Math.round((election.totalVotesCast / election.totalVoters) * 100)}%
                                                         </span>
                                                     </div>
                                                     <div
                                                         className="h-2 rounded-full overflow-hidden"
-                                                        style={{ backgroundColor: colors.bg.tertiary }}
+                                                        style={{backgroundColor: colors.bg.tertiary}}
                                                     >
                                                         <div
                                                             className="h-full transition-all duration-500"
                                                             style={{
-                                                                width: `${(election.totalVotes / election.totalVoters) * 100}%`,
+                                                                width: `${(election.totalVotesCast / election.totalVoters) * 100}%`,
                                                                 backgroundColor: colors.accent.success
                                                             }}
                                                         />
@@ -583,7 +478,7 @@ export default function VoteSecureDashboard() {
                                             </>
                                         )}
 
-                                        {election.status === 'upcoming' && (
+                                        {election.status === 'UPCOMING' && (
                                             <button
                                                 className="w-full py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-[1.02]"
                                                 style={{
@@ -623,7 +518,7 @@ export default function VoteSecureDashboard() {
                                         boxShadow: `0 4px 16px ${colors.glow.secondary}`
                                     }}
                                 >
-                                    <CalendarIcon className="w-5 h-5 text-white" />
+                                    <CalendarIcon className="w-5 h-5 text-white"/>
                                 </div>
                                 <h2
                                     className="text-xl font-bold"
@@ -657,7 +552,7 @@ export default function VoteSecureDashboard() {
                                             >
                                                 <div
                                                     className="w-2 h-2 rounded-full"
-                                                    style={{ backgroundColor: getEventTypeColor(event.type) }}
+                                                    style={{backgroundColor: getEventTypeColor(event.type)}}
                                                 />
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -678,7 +573,10 @@ export default function VoteSecureDashboard() {
                                                             fontFamily: "'Inter', sans-serif"
                                                         }}
                                                     >
-                                                        {event.date}
+                                                        {event.date.toLocaleDateString('en-US', {
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })}
                                                     </span>
                                                     <span
                                                         style={{
@@ -722,7 +620,7 @@ export default function VoteSecureDashboard() {
                                         boxShadow: `0 4px 16px rgba(34, 197, 94, 0.3)`
                                     }}
                                 >
-                                    <BarChart3 className="w-5 h-5 text-white" />
+                                    <BarChart3 className="w-5 h-5 text-white"/>
                                 </div>
                                 <h2
                                     className="text-xl font-bold"
@@ -753,7 +651,7 @@ export default function VoteSecureDashboard() {
                                                     backgroundColor: `${colors.accent.success}20`
                                                 }}
                                             >
-                                                <Award className="w-4 h-4" style={{ color: colors.accent.success }} />
+                                                <Award className="w-4 h-4" style={{color: colors.accent.success}}/>
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h3
@@ -772,7 +670,11 @@ export default function VoteSecureDashboard() {
                                                         fontFamily: "'Inter', sans-serif"
                                                     }}
                                                 >
-                                                    {result.date}
+                                                    {result.publishedAt.toLocaleDateString('en-US', {
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        year: 'numeric'
+                                                    })}
                                                 </p>
                                             </div>
                                         </div>
@@ -806,7 +708,7 @@ export default function VoteSecureDashboard() {
                                             </div>
                                             <div
                                                 className="h-1.5 rounded-full overflow-hidden"
-                                                style={{ backgroundColor: colors.bg.secondary }}
+                                                style={{backgroundColor: colors.bg.secondary}}
                                             >
                                                 <div
                                                     className="h-full transition-all duration-500"
@@ -835,7 +737,7 @@ export default function VoteSecureDashboard() {
                                                 }}
                                             >
                                                 View Details
-                                                <ChevronRight className="w-3 h-3" />
+                                                <ChevronRight className="w-3 h-3"/>
                                             </button>
                                         </div>
                                     </div>
