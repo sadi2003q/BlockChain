@@ -191,10 +191,22 @@ export default function VoteSecureSignUp() {
 
         try {
 
-            await axios.post('/api/user/signup', formData)
-            router.push('/dashboard')
+            const payload = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone || undefined,
+                password: formData.password,
+                dateOfBirth: formData.dateOfBirth,
+                gender: formData.gender,
+                address: formData.address,
+            };
+
+            await axios.post("/api/user/signup", payload)
+            router.push("/signin");
         } catch (error) {
-            toast.error("Error signing up");
+            if(error instanceof Error) {
+                toast.error("Error signing up");
+            }
         } finally {
             setIsLoading(false);
         }

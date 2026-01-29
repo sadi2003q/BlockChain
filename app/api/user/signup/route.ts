@@ -3,16 +3,16 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { connect } from "@/lib/dbConfig";
-import { User } from '@/schema/user.schema'
-import bcryptjs from "bcryptjs";
-import jwt from "jsonwebtoken";
+// import { User } from '@/schema/user.schema'
+// import bcryptjs from "bcryptjs";
+// import jwt from "jsonwebtoken";
 
 await connect();
 
 export const POST = async (req: NextRequest) => {
     try {
 
-        const body = req.body;
+        const body = await req.json();
         console.log("Request from the Body: ", body)
         return NextResponse.json(
             {
