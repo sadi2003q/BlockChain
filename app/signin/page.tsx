@@ -8,6 +8,10 @@ import {Header} from "@/components/signin/Header";
 import {Form} from "@/components/signin/Form"
 import {Security} from "@/components/signin/Security";
 import {ForewordLink} from "@/components/signin/ForewordLink";
+import axios from "axios";
+import {useRouter} from "next/navigation";
+import {NextResponse} from "next/server";
+import toast from "react-hot-toast";
 
 export interface ValidationErrors {
     email?: string;
@@ -24,6 +28,8 @@ export default function VoteSecureSignIn() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [focusedField, setFocusedField] = useState<FocusedField>(null);
+    const router = useRouter();
+
 
 
     const colors = getColor(isDarkMode);
@@ -45,12 +51,22 @@ export default function VoteSecureSignIn() {
             return;
         }
 
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            const user = {
+                email: email,
+                password: password,
+            }
+
+            await axios.post("api/user/signin", user)
+            router.push("/dashboard")
+        } catch (error) {
+            if(error instanceof NextResponse) {
+                console.error(error.body)
+            }
+            toast.error("Invalid Credentials")
+        } finally {
             setIsLoading(false);
-            // Handle sign-in logic here
-            console.log('Signing in...', { email, password });
-        }, 1500);
+        }
     };
 
     return (

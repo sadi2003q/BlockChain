@@ -66,16 +66,16 @@ const UserSchema = new Schema(
  */
 UserSchema.pre("save", function () {
     if (this.dateOfBirth) {
-        const today = new Date();
         const birthDate = new Date(this.dateOfBirth);
-
+        if (isNaN(birthDate.getTime())) {
+            throw new Error("Invalid dateOfBirth");
+        }
+        const today = new Date();
         let age = today.getFullYear() - birthDate.getFullYear();
         const m = today.getMonth() - birthDate.getMonth();
-
         if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
-
         this.age = age;
     }
 });

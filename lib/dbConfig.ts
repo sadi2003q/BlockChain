@@ -1,30 +1,13 @@
-
-
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-
-dotenv.config({path: "/Users/sadi_/Coding/blockchain/.env"});
-
-const uri = process.env.MONGODB_URI;
 
 export const connect = async () => {
+    if (mongoose.connection.readyState >= 1) return;
+
     try {
-        if(uri) {
-            await mongoose.connect(uri);
-            const connection = mongoose.connection;
-
-            connection.on("connected" , () => {
-                console.log("Connected to MongoDB")
-            })
-
-            connection.on("error" , (err) => {
-                console.log("Error connecting to MongoDB", err)
-            })
-
-        }
-
+        await mongoose.connect(process.env.MONGODB_URI!);
+        console.log("✅ Connected to MongoDB");
     } catch (error) {
-        console.log(error)
+        console.error("❌ MongoDB connection error:", error);
+        throw error;
     }
-}
-
+};

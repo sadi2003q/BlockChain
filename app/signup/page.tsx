@@ -40,9 +40,9 @@ export default function VoteSecureSignUp() {
         name: 'Adnan Abdullah',
         email: 'Adnan@gmail.com',
         phone: '01999477414',
-        password: 'qwywtru455%',
-        confirmPassword: 'qwywtru455%',
-        dateOfBirth: '',
+        password: '123456789',
+        confirmPassword: '123456789',
+        dateOfBirth: new Date().toISOString(),
         gender: 'male' as GenderType,
         address: '',
         profileImage: null as File | null,
@@ -202,7 +202,7 @@ export default function VoteSecureSignUp() {
             };
 
             await axios.post("/api/user/signup", payload)
-            router.push("/signin");
+            router.push("/dashboard");
         } catch (error) {
             if(error instanceof Error) {
                 toast.error("Error signing up");
