@@ -42,7 +42,7 @@ export default function VoteSecureSignUp() {
         phone: '01999477414',
         password: '123456789',
         confirmPassword: '123456789',
-        dateOfBirth: new Date().toISOString(),
+        dateOfBirth: new Date().toISOString().split("T")[0],
         gender: 'male' as GenderType,
         address: '',
         profileImage: null as File | null,
