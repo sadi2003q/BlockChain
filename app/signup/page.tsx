@@ -24,21 +24,26 @@ import {ProfileImageUpload} from "@/components/signup/ProfileImageUpload";
 import {NavigationButtons} from "@/components/signup/NavigationButtons";
 import {ForewordLink_SignIn} from "@/components/signup/ForewordLink_SignIn";
 import {ValidationErrors, FocusedField, GenderType} from "@/lib/Schema_Lib/signup.schema";
+import {USER_MODEL} from "@/model/user.model";
+import axios from "axios";
+import {useRouter} from "next/navigation";
+import toast from "react-hot-toast";
+
 
 
 export default function VoteSecureSignUp() {
 
-
+    // =================  STATE VARIABLES =================
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [currentStep, setCurrentStep] = useState<number>(1);
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        password: '',
-        confirmPassword: '',
+    const [formData, setFormData] = useState<USER_MODEL>({
+        name: 'Adnan Abdullah',
+        email: 'Adnan@gmail.com',
+        phone: '01999477414',
+        password: 'qwywtru455%',
+        confirmPassword: 'qwywtru455%',
         dateOfBirth: '',
-        gender: '' as GenderType,
+        gender: 'male' as GenderType,
         address: '',
         profileImage: null as File | null,
     });
@@ -49,12 +54,32 @@ export default function VoteSecureSignUp() {
     const [focusedField, setFocusedField] = useState<FocusedField>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+    const router = useRouter();
 
 
-    // Color system matching the landing page
+
+
+    // =================  FUNCTIONS  =================
+
+    /**
+     * Returns the Color object based on the current theme mode.
+     */
     const colors = getColor(isDarkMode)
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+
+    /**
+     * Handles the change event for input elements in a form and updates the corresponding form data state.
+     *
+     * - Updates the form data state by extracting the `name` and `value` from the event's target element.
+     * - Clears validation errors for the field being updated if an error exists.
+     *
+     * @param e - The change event triggered by an HTML input, select, or textarea element.
+     */
+    const handleInputChange = (
+        e: ChangeEvent<HTMLInputElement
+            | HTMLSelectElement
+            | HTMLTextAreaElement>
+    ) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         // Clear error for this field
@@ -63,7 +88,26 @@ export default function VoteSecureSignUp() {
         }
     };
 
-    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    /**
+     * Handles the change event for an image file input.
+     *
+     * This function is triggered when a user selects a file through an input of type `file`. It validates the file size,
+     * sets error messages if the file size exceeds the allowed limit, updates the form data with the selected file,
+     * and generates a preview of the image using a FileReader.
+     *
+     * Validation:
+     * - Ensures that the selected file's size does not exceed 5MB.
+     *
+     * Actions:
+     * - Updates the state with the selected file.
+     * - Generates a base64-encoded string for preview and updates the corresponding state.
+     * - Clears any prior error messages related to the profile image.
+     *
+     * @param {ChangeEvent<HTMLInputElement>} e - The change event triggered by a file input element.
+     */
+    const handleImageChange = (
+        e: ChangeEvent<HTMLInputElement>
+    ) => {
         const file = e.target.files?.[0];
         if (file) {
             if (file.size > 5 * 1024 * 1024) {
@@ -80,6 +124,21 @@ export default function VoteSecureSignUp() {
         }
     };
 
+    /**
+     * Validates the input fields of a multistep form based on the provided step number.
+     *
+     * @param {number} step - The current step of the form (e.g., 1, 2, or 3).
+     * @returns {boolean} - Returns `true` if all validations pass and no errors are found. Otherwise, returns `false`.
+     *
+     * The function performs validation for each step as follows:
+     * - Step 1: Validates `name`, `email`, and `phone` fields for presence, format, and correctness.
+     * - Step 2: Validates `password`, `confirmPassword`, `dateOfBirth`, and `gender` fields for presence, format, and logical consistency (e.g., passwords match).
+     * - Step 3: Validates the `address` field for presence.
+     *
+     * Any validation errors encountered during this process are stored in an internal `newErrors` object,
+     * which is then set to the state using the `setErrors` function.
+     * This provides a means of displaying error messages to the user.
+     */
     const validateStep = (step: number): boolean => {
         const newErrors: ValidationErrors = {};
 
@@ -106,27 +165,58 @@ export default function VoteSecureSignUp() {
         return Object.keys(newErrors).length === 0;
     };
 
+
     const handleNext = () => {
         if (validateStep(currentStep)) {
             setCurrentStep(prev => prev + 1);
         }
     };
 
+
+    /**
+     * Handles the form submission event.
+     *
+     * This function prevents the default behavior of a form submission and validates
+     * the current step before proceeding. If validation fails, the submission process
+     * is halted. The function simulates an API call by setting a loading state while
+     * asynchronously handling the submission logic.
+     *
+     * @param {FormEvent<HTMLFormElement>} e - The form submission event.
+     */
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!validateStep(currentStep)) return;
 
         setIsLoading(true);
 
-        // Simulate API call
-        setTimeout(() => {
+        try {
+
+            await axios.post('/api/user/signup', formData)
+            router.push('/dashboard')
+        } catch (error) {
+            toast.error("Error signing up");
+        } finally {
             setIsLoading(false);
-            console.log('Signing up...', formData);
-            // Handle sign-up logic here
-        }, 1500);
+        }
+
     };
 
-    const progressPercentage = (currentStep / 3) * 100;
+    /**
+     * Represents the progress as a percentage value based on the current step
+     * in a process consisting of three steps.
+     *
+     * This variable calculates the progress by dividing the current step
+     * by the total number of steps (3) and multiplying the result by 100.
+     * It is used to track and represent how far a user or process has
+     * progressed in a predefined sequence of steps.
+     *
+     * @type {number}
+     */
+    const progressPercentage: number = (currentStep / 3) * 100;
+
+
+
+
 
     return (
         <div
