@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { Mail, AlertCircle } from 'lucide-react';
-import { FocusedField } from '@/app/signup/page';
+import { FocusedField } from '@/lib/Schema_Lib/signup.schema';
 
 interface EmailFieldProps {
     value: string;

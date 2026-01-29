@@ -12,18 +12,14 @@ import axios from "axios";
 import {useRouter} from "next/navigation";
 import {NextResponse} from "next/server";
 import toast from "react-hot-toast";
+import {ValidationErrors, FocusedField} from "@/lib/Schema_Lib/signup.schema";
 
-export interface ValidationErrors {
-    email?: string;
-    password?: string;
-}
 
-export type FocusedField = 'email' | 'password' | null;
 
 export default function VoteSecureSignIn() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+    const [email, setEmail] = useState<string>('Adnan@gmail.com');
+    const [password, setPassword] = useState<string>('123456789');
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
@@ -34,11 +30,8 @@ export default function VoteSecureSignIn() {
 
     const colors = getColor(isDarkMode);
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setErrors({});
-        setIsLoading(true);
 
+    const basicValidation = () => {
         // Basic validation
         const newErrors: ValidationErrors = {};
         if (!email) newErrors.email = 'Email is required';
@@ -50,6 +43,14 @@ export default function VoteSecureSignIn() {
             setIsLoading(false);
             return;
         }
+    }
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setErrors({});
+        setIsLoading(true);
+
+        basicValidation()
 
         try {
             const user = {
@@ -68,6 +69,10 @@ export default function VoteSecureSignIn() {
             setIsLoading(false);
         }
     };
+
+
+
+
 
     return (
 

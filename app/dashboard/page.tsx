@@ -36,7 +36,7 @@ export default function VoteSecureDashboard() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
 
-
+    //FIXME: STATE VARIABLE IS NOT INITAILISED
     const [notificationCount, setNotificationCount] = useState<number>(3);
     const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(_calendarEvents);
     const [elections, setElections] = useState<Election[]>(_elections);

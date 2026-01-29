@@ -1,7 +1,7 @@
 import {AlertCircle, ArrowRight, Eye, EyeOff, Lock, Mail} from "lucide-react";
 import React, {FormEvent} from "react";
 import {getColor} from "@/lib/_colors";
-import {FocusedField, ValidationErrors} from "@/app/signin/page";
+import {FocusedField, ValidationErrors} from "@/lib/Schema_Lib/signup.schema";
 
 type IForm = {
     isDarkMode: boolean;

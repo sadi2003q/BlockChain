@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { Phone, AlertCircle } from 'lucide-react';
-import { FocusedField } from '@/app/signup/page';
+import { FocusedField } from '@/lib/Schema_Lib/signup.schema';
 
 interface PhoneFieldProps {
     value: string;
