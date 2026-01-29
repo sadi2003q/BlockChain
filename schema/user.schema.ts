@@ -49,6 +49,7 @@ const UserSchema = new Schema(
         },
         profileImage: {
             type: String, // URL
+            required: false,
         },
         verifiedAt: {
             type: Date,

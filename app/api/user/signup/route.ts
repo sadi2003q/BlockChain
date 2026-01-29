@@ -30,7 +30,7 @@ export const POST = async (req: NextRequest) => {
         const {
             name, email, phone,
             password, dateOfBirth, gender,
-            address,
+            address, profileImage
         } = body;
 
         // Check if a user already exists
@@ -76,6 +76,7 @@ export const POST = async (req: NextRequest) => {
             age, // ✅ now age is set
             gender,
             address,
+            profileImage
         });
 
 

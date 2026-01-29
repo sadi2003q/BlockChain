@@ -88,6 +88,35 @@ export default function VoteSecureSignUp() {
         }
     };
 
+
+    const uploadProfileImage = async (file: File): Promise<string> => {
+        const uploadData = new FormData(); // ✅ renamed
+
+        uploadData.append("file", file);
+        uploadData.append(
+            "upload_preset",
+            process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string
+        );
+
+        const res = await fetch(
+            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            {
+                method: "POST",
+                body: uploadData,
+            }
+        );
+
+        if (!res.ok) {
+            throw new Error("Image upload failed");
+        }
+
+        const data = await res.json();
+        return data.secure_url as string;
+    };
+
+
+
+
     /**
      * Handles the change event for an image file input.
      *
@@ -189,6 +218,12 @@ export default function VoteSecureSignUp() {
 
         try {
 
+            let imageUrl: string | null = null;
+
+            if (formData.profileImage) {
+                imageUrl = await uploadProfileImage(formData.profileImage);
+            }
+
             const payload = {
                 name: formData.name,
                 email: formData.email,
@@ -197,6 +232,7 @@ export default function VoteSecureSignUp() {
                 dateOfBirth: formData.dateOfBirth,
                 gender: formData.gender,
                 address: formData.address,
+                profileImage: imageUrl
             };
 
             await axios.post("/api/user/signup", payload)
