@@ -91,9 +91,7 @@ export default function VoteSecureSignUp() {
     /**
      * Handles the change event for an image file input.
      *
-     * This function is triggered when a user selects a file through an input of type `file`. It validates the file size,
-     * sets error messages if the file size exceeds the allowed limit, updates the form data with the selected file,
-     * and generates a preview of the image using a FileReader.
+     * This function is triggered when a user selects a file through an input of type `file`. It validates the file size,sets error messages if the file size exceeds the allowed limit, updates the form data with the selected file,and generates a preview of the image using a FileReader.
      *
      * Validation:
      * - Ensures that the selected file's size does not exceed 5MB.

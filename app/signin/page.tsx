@@ -17,6 +17,8 @@ import {ValidationErrors, FocusedField} from "@/lib/Schema_Lib/signup.schema";
 
 
 export default function VoteSecureSignIn() {
+
+    // =================  STATE VARIABLES  =================
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [email, setEmail] = useState<string>('Adnan@gmail.com');
     const [password, setPassword] = useState<string>('123456789');
@@ -27,7 +29,7 @@ export default function VoteSecureSignIn() {
     const router = useRouter();
 
 
-
+    // =================  FUNCTIONS  =================
     const colors = getColor(isDarkMode);
 
 
