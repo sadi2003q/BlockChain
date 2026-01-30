@@ -15,6 +15,8 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { ElectionCalendar } from "@/components/dashboard/ElectionCalendar";
 import {WelcomeMessage} from "@/components/dashboard/WelcomeMessage";
 import {LogoutConfirmationModal} from "@/components/dashboard/signOutModel";
+import {useRouter} from "next/navigation";
+import axios from "axios";
 
 export interface UserProfile {
     name: string;
@@ -203,7 +205,7 @@ export default function Dashboard() {
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
-
+    const router = useRouter();
 
 
 
@@ -212,6 +214,18 @@ export default function Dashboard() {
 
     //============================ FUNCTIONS =========================
     const showLogoutConfirmation = () => setShowLogoutConfirm(true)
+
+    const handleLogout = async () => {
+        try {
+            await axios.post('/api/user/signout');
+            router.push('/signin');
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error(error.message);
+            }
+        }
+    }
+
 
     return (
         <div
@@ -286,7 +300,7 @@ export default function Dashboard() {
             {showLogoutConfirm && (
                 <LogoutConfirmationModal
                     onCancel={() => setShowLogoutConfirm(false)}
-                    onConfirm={() => setShowLogoutConfirm(false)}
+                    onConfirm={handleLogout}
                     isDarkMode={isDarkMode}
                 />
             )}
