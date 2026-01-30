@@ -1,761 +1,348 @@
 "use client"
 
-import React, {useState} from 'react';
-import {
-    Shield,
-    Moon,
-    Sun,
-    Bell,
-    User,
-    Calendar as CalendarIcon,
-    CheckCircle,
-    Clock,
-    Users,
-    Vote,
-    BarChart3,
-    Settings,
-    LogOut,
-    ChevronRight,
-    AlertCircle,
-    Award
-} from 'lucide-react';
-import {getColor} from "@/lib/_colors";
-import {
-    CalendarEvent,
-    Election,
-    ElectionStatus,
-    ResultSummary,
-    _calendarEvents,
-    _elections,
-    _recentResults
-} from "@/lib/Schema_Lib/dashboard.schema";
-import {AnimatedBackground} from "@/components/dashboard/AnimatedBackground";
+import React, { useState, useEffect } from 'react';
+import { getColor } from "@/lib/_colors";
+import { ThemeToggleButton } from "@/components/signin/ThemeToggleButton";
+import { DashboardHeader } from "@/components/dashboard/Header";
+import { DashboardAnimation } from "@/components/dashboard/Animation";
+import { ProfileCard } from "@/components/dashboard/ProfileCard";
+import { VotingStatsCard } from "@/components/dashboard/VotingStatsCard";
+import { RunningElections } from "@/components/dashboard/RunningElections";
+import { UpcomingElections } from "@/components/dashboard/UpcomingElections";
+import { PreviousElections } from "@/components/dashboard/PreviousElections";
+import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
+import { QuickActions } from "@/components/dashboard/QuickActions";
+import { ElectionCalendar } from "@/components/dashboard/ElectionCalendar";
 
+export interface UserProfile {
+    name: string;
+    email: string;
+    voterId: string;
+    district: string;
+    registrationDate: string;
+    walletAddress: string;
+    profileImage: string;
+    isVerified: boolean;
+}
 
-export default function VoteSecureDashboard() {
+export interface Election {
+    id: number;
+    title: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    status: 'running' | 'upcoming' | 'completed';
+    totalCandidates: number;
+    totalVoters: number;
+    votedCount: number;
+    category: string;
+}
+
+export interface VoteCast {
+    id: number;
+    electionTitle: string;
+    candidateName: string;
+    votedAt: string;
+    txHash: string;
+    status: 'confirmed' | 'pending';
+}
+
+export interface Notification {
+    id: number;
+    title: string;
+    message: string;
+    time: string;
+    type: 'info' | 'success' | 'warning' | 'election';
+    isRead: boolean;
+}
+
+export default function Dashboard() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
-    const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
+    const [activeTab, setActiveTab] = useState<'overview' | 'elections' | 'history' | 'notifications'>('overview');
 
-    //FIXME: STATE VARIABLE IS NOT INITAILISED
-    const [notificationCount, setNotificationCount] = useState<number>(3);
-    const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(_calendarEvents);
-    const [elections, setElections] = useState<Election[]>(_elections);
-    const [recentResults, setRecentResults] = useState<ResultSummary[]>(_recentResults);
-
-
-    // Color system matching the landing page
     const colors = getColor(isDarkMode);
 
-
-    const getStatusColor = (status: ElectionStatus) => {
-        switch (status) {
-            case 'ONGOING':
-                return colors.accent.success;
-            case 'UPCOMING':
-                return colors.accent.secondary;
-            case 'COMPLETED':
-                return colors.text.tertiary;
-            case 'CANCELLED':
-                return colors.accent.danger;
-            default:
-                return colors.text.tertiary;
-        }
+    // Mock User Profile Data
+    const userProfile: UserProfile = {
+        name: "John Doe",
+        email: "john.doe@university.edu",
+        voterId: "VS-2026-8472",
+        district: "District 5",
+        registrationDate: "Jan 15, 2026",
+        walletAddress: "0x7a3f...2e9c",
+        profileImage: "JD",
+        isVerified: true
     };
 
-    const getStatusIcon = (status: ElectionStatus) => {
-        switch (status) {
-            case 'ONGOING':
-                return <Vote className="w-4 h-4"/>;
-            case 'UPCOMING':
-                return <Clock className="w-4 h-4"/>;
-            case 'COMPLETED':
-                return <CheckCircle className="w-4 h-4"/>;
-            case 'CANCELLED':
-                return <AlertCircle className="w-4 h-4"/>;
-            default:
-                return <Clock className="w-4 h-4"/>;
+    // Mock Running Elections
+    const runningElections: Election[] = [
+        {
+            id: 1,
+            title: "Student Council President 2026",
+            description: "Annual election for Student Council President",
+            startDate: "Jan 25, 2026",
+            endDate: "Jan 30, 2026",
+            status: 'running',
+            totalCandidates: 3,
+            totalVoters: 2847,
+            votedCount: 1923,
+            category: "Student Government"
+        },
+        {
+            id: 2,
+            title: "Department Representative",
+            description: "Select your department representative",
+            startDate: "Jan 26, 2026",
+            endDate: "Feb 2, 2026",
+            status: 'running',
+            totalCandidates: 5,
+            totalVoters: 450,
+            votedCount: 234,
+            category: "Department"
         }
+    ];
+
+    // Mock Upcoming Elections
+    const upcomingElections: Election[] = [
+        {
+            id: 3,
+            title: "Annual Budget Approval",
+            description: "Vote on the proposed annual budget allocation",
+            startDate: "Feb 10, 2026",
+            endDate: "Feb 15, 2026",
+            status: 'upcoming',
+            totalCandidates: 2,
+            totalVoters: 2847,
+            votedCount: 0,
+            category: "Finance"
+        },
+        {
+            id: 4,
+            title: "Campus Improvement Initiative",
+            description: "Choose priority areas for campus improvements",
+            startDate: "Feb 20, 2026",
+            endDate: "Feb 25, 2026",
+            status: 'upcoming',
+            totalCandidates: 4,
+            totalVoters: 2847,
+            votedCount: 0,
+            category: "Infrastructure"
+        }
+    ];
+
+    // Mock Previous Elections
+    const previousElections: Election[] = [
+        {
+            id: 5,
+            title: "Club Federation Head 2025",
+            description: "Election for Club Federation leadership",
+            startDate: "Dec 1, 2025",
+            endDate: "Dec 5, 2025",
+            status: 'completed',
+            totalCandidates: 4,
+            totalVoters: 1850,
+            votedCount: 1654,
+            category: "Student Government"
+        },
+        {
+            id: 6,
+            title: "Sports Committee Election",
+            description: "Annual sports committee member selection",
+            startDate: "Nov 15, 2025",
+            endDate: "Nov 20, 2025",
+            status: 'completed',
+            totalCandidates: 6,
+            totalVoters: 1200,
+            votedCount: 987,
+            category: "Sports"
+        }
+    ];
+
+    // Mock Vote Cast History
+    const voteCastHistory: VoteCast[] = [
+        {
+            id: 1,
+            electionTitle: "Student Council President 2026",
+            candidateName: "Sarah Johnson",
+            votedAt: "Jan 27, 2026 - 2:34 PM",
+            txHash: "0x7a3f8b2c...9e4d",
+            status: 'confirmed'
+        },
+        {
+            id: 2,
+            electionTitle: "Club Federation Head 2025",
+            candidateName: "Michael Chen",
+            votedAt: "Dec 3, 2025 - 10:15 AM",
+            txHash: "0x4b2e9f1a...8c3d",
+            status: 'confirmed'
+        },
+        {
+            id: 3,
+            electionTitle: "Sports Committee Election",
+            candidateName: "Emily Rodriguez",
+            votedAt: "Nov 18, 2025 - 4:22 PM",
+            txHash: "0x9d4c7e3b...2a1f",
+            status: 'confirmed'
+        }
+    ];
+
+    // Mock Notifications
+    const [notifications, setNotifications] = useState<Notification[]>([
+        {
+            id: 1,
+            title: "New Election Started",
+            message: "Department Representative election is now open for voting",
+            time: "2 hours ago",
+            type: 'election',
+            isRead: false
+        },
+        {
+            id: 2,
+            title: "Vote Confirmed",
+            message: "Your vote for Student Council President has been recorded on blockchain",
+            time: "1 day ago",
+            type: 'success',
+            isRead: false
+        },
+        {
+            id: 3,
+            title: "Upcoming Election",
+            message: "Annual Budget Approval voting starts in 2 weeks",
+            time: "3 days ago",
+            type: 'info',
+            isRead: true
+        },
+        {
+            id: 4,
+            title: "Election Ending Soon",
+            message: "Student Council President election ends in 3 days",
+            time: "5 days ago",
+            type: 'warning',
+            isRead: true
+        }
+    ]);
+
+    // Voting Stats
+    const votingStats = {
+        totalVotesCast: 3,
+        electionsParticipated: 3,
+        upcomingElections: upcomingElections.length,
+        activeElections: runningElections.length
     };
 
-    const getEventTypeColor = (type: string) => {
-        switch (type) {
-            case 'election':
-                return colors.accent.primary;
-            case 'deadline':
-                return colors.accent.warning;
-            case 'result':
-                return colors.accent.success;
-            default:
-                return colors.text.tertiary;
-        }
+    const markNotificationAsRead = (id: number) => {
+        setNotifications(prev => 
+            prev.map(n => n.id === id ? { ...n, isRead: true } : n)
+        );
     };
+
+    const unreadCount = notifications.filter(n => !n.isRead).length;
 
     return (
         <div
             className="min-h-screen transition-colors duration-500 relative overflow-hidden"
-            style={{backgroundColor: colors.bg.primary}}
+            style={{ backgroundColor: colors.bg.primary }}
         >
-            {/* Animated Background Grid - Faster */}
-            <AnimatedBackground isDarkMode={isDarkMode}/>
+            {/* Dark Mode Toggle Button */}
+            <div className="fixed top-6 right-6 z-[60]">
+                <ThemeToggleButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+            </div>
 
+            {/* Animated Background */}
+            <DashboardAnimation isDarkMode={isDarkMode} />
 
-
-            {/* Header / Navigation */}
-            <header
-                className="sticky top-0 z-40 backdrop-blur-2xl border-b transition-all duration-300"
-                style={{
-                    backgroundColor: isDarkMode ? 'rgba(10, 10, 10, 0.8)' : 'rgba(243, 233, 220, 0.8)',
-                    borderColor: colors.border.subtle
-                }}
-            >
-                <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-20">
-                        {/* Logo */}
-                        <div className="flex items-center gap-3 group cursor-pointer">
-                            <div
-                                className="w-10 h-10 rounded-xl flex items-center justify-center transform group-hover:rotate-6 transition-transform duration-300"
-                                style={{
-                                    backgroundColor: colors.accent.primary,
-                                    boxShadow: `0 8px 24px ${colors.glow.primary}`
-                                }}
-                            >
-                                <Shield className="w-6 h-6 text-white"/>
-                            </div>
-                            <div>
-                                <span
-                                    className="text-xl font-bold tracking-tight"
-                                    style={{
-                                        fontFamily: "'Sora', sans-serif",
-                                        color: colors.text.primary
-                                    }}
-                                >
-                                    VoteSecure
-                                </span>
-                                <p
-                                    className="text-xs"
-                                    style={{
-                                        color: colors.text.tertiary,
-                                        fontFamily: "'Inter', sans-serif"
-                                    }}
-                                >
-                                    Dashboard
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Right Side Actions */}
-                        <div className="flex items-center gap-4">
-                            {/* Dark Mode Toggle */}
-                            <button
-                                onClick={() => setIsDarkMode(!isDarkMode)}
-                                className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
-                                style={{
-                                    backgroundColor: colors.bg.tertiary,
-                                    border: `1px solid ${colors.border.subtle}`
-                                }}
-                            >
-                                {isDarkMode ? (
-                                    <Sun className="w-5 h-5" style={{color: colors.accent.warning}}/>
-                                ) : (
-                                    <Moon className="w-5 h-5" style={{color: colors.accent.primary}}/>
-                                )}
-                            </button>
-
-                            {/* Notifications */}
-                            <button
-                                className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
-                                style={{
-                                    backgroundColor: colors.bg.tertiary,
-                                    border: `1px solid ${colors.border.subtle}`
-                                }}
-                            >
-                                <Bell className="w-5 h-5" style={{color: colors.text.secondary}}/>
-                                {notificationCount > 0 && (
-                                    <span
-                                        className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
-                                        style={{
-                                            backgroundColor: colors.accent.primary,
-                                            color: '#ffffff'
-                                        }}
-                                    >
-                                        {notificationCount}
-                                    </span>
-                                )}
-                            </button>
-
-                            {/* Profile */}
-                            <div className="relative">
-                                <button
-                                    onClick={() => setShowProfileMenu(!showProfileMenu)}
-                                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
-                                    style={{
-                                        backgroundColor: colors.accent.primary,
-                                        boxShadow: `0 4px 16px ${colors.glow.primary}`
-                                    }}
-                                >
-                                    <User className="w-5 h-5 text-white"/>
-                                </button>
-
-                                {/* Profile Dropdown */}
-                                {showProfileMenu && (
-                                    <div
-                                        className="absolute right-0 mt-2 w-56 rounded-xl shadow-2xl animate-fadeIn overflow-hidden"
-                                        style={{
-                                            backgroundColor: colors.bg.card,
-                                            border: `1px solid ${colors.border.subtle}`
-                                        }}
-                                    >
-                                        <div
-                                            className="px-4 py-3 border-b"
-                                            style={{borderColor: colors.border.subtle}}
-                                        >
-                                            <p
-                                                className="text-sm font-bold"
-                                                style={{
-                                                    color: colors.text.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                John Doe
-                                            </p>
-                                            <p
-                                                className="text-xs"
-                                                style={{
-                                                    color: colors.text.tertiary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                john@university.edu
-                                            </p>
-                                        </div>
-                                        <div className="py-2">
-                                            {[
-                                                {
-                                                    icon: User, label: 'Profile', action: () => {
-                                                    }
-                                                },
-                                                {
-                                                    icon: Settings, label: 'Settings', action: () => {
-                                                    }
-                                                },
-                                                {
-                                                    icon: LogOut, label: 'Sign Out', action: () => {
-                                                    }
-                                                }
-                                            ].map((item, i) => (
-                                                <button
-                                                    key={i}
-                                                    onClick={item.action}
-                                                    className="w-full px-4 py-2 flex items-center gap-3 transition-colors duration-200"
-                                                    style={{
-                                                        color: colors.text.secondary,
-                                                        fontFamily: "'Inter', sans-serif"
-                                                    }}
-                                                    onMouseEnter={(e) => {
-                                                        e.currentTarget.style.backgroundColor = colors.bg.elevated;
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'transparent';
-                                                    }}
-                                                >
-                                                    <item.icon className="w-4 h-4"/>
-                                                    <span className="text-sm">{item.label}</span>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            {/* Header */}
+            <DashboardHeader 
+                isDarkMode={isDarkMode} 
+                userProfile={userProfile} 
+                unreadCount={unreadCount}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+            />
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-6 lg:px-8 py-8 relative z-10">
-                {/* Welcome Section */}
-                <div className="mb-8 animate-fadeInDown">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+                {/* Welcome Message */}
+                <div className="mb-6 animate-fadeInUp">
                     <h1
-                        className="text-3xl lg:text-4xl font-bold mb-2"
-                        style={{
-                            fontFamily: "'Sora', sans-serif",
-                            color: colors.text.primary
+                        className="text-3xl sm:text-4xl font-bold mb-2"
+                        style={{ 
+                            color: colors.text.primary,
+                            fontFamily: "'Sora', sans-serif"
                         }}
                     >
-                        Welcome back, John! 👋
+                        Welcome back, {userProfile.name.split(' ')[0]}! 👋
                     </h1>
-                    <p
-                        className="text-base"
-                        style={{
-                            color: colors.text.secondary,
-                            fontFamily: "'Inter', sans-serif"
-                        }}
-                    >
-                        Here's what's happening with your elections today.
+                    <p className="text-base sm:text-lg" style={{ color: colors.text.secondary }}>
+                        Here's your voting dashboard overview
                     </p>
                 </div>
 
-                {/* Dashboard Grid */}
-                <div className="grid lg:grid-cols-3 gap-6">
+                {/* Quick Stats Bar */}
+                <div className="mb-6 sm:mb-8 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+                    <QuickActions 
+                        isDarkMode={isDarkMode} 
+                        stats={votingStats}
+                        runningElections={runningElections}
+                    />
+                </div>
 
-                    {/* Left Column - Running/Upcoming Elections (spans 2 columns) */}
-                    <div className="lg:col-span-2 space-y-6">
-
-                        {/* Running/Upcoming Elections Card */}
-                        <div
-                            className="rounded-2xl p-6 animate-fadeInLeft"
-                            style={{
-                                backgroundColor: colors.bg.card,
-                                border: `1px solid ${colors.border.subtle}`,
-                                boxShadow: `0 4px 16px ${colors.glow.primary}`
-                            }}
-                        >
-                            <div className="flex items-center justify-between mb-6">
-                                <h2
-                                    className="text-2xl font-bold"
-                                    style={{
-                                        fontFamily: "'Sora', sans-serif",
-                                        color: colors.text.primary
-                                    }}
-                                >
-                                    Running/Upcoming Elections
-                                </h2>
-                                <button
-                                    className="text-sm font-semibold flex items-center gap-1 transition-all duration-200 hover:gap-2"
-                                    style={{
-                                        color: colors.accent.primary,
-                                        fontFamily: "'Inter', sans-serif"
-                                    }}
-                                >
-                                    View All
-                                    <ChevronRight className="w-4 h-4"/>
-                                </button>
-                            </div>
-
-                            <div className="space-y-4">
-                                {elections.map((election, index) => (
-                                    <div
-                                        key={election.id}
-                                        className="p-5 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer group"
-                                        style={{
-                                            backgroundColor: colors.bg.elevated,
-                                            border: `1px solid ${colors.border.subtle}`,
-                                            animationDelay: `${index * 100}ms`
-                                        }}
-                                    >
-                                        <div className="flex items-start justify-between mb-3">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <h3
-                                                        className="text-lg font-bold group-hover:text-opacity-80 transition-all"
-                                                        style={{
-                                                            fontFamily: "'Sora', sans-serif",
-                                                            color: colors.text.primary
-                                                        }}
-                                                    >
-                                                        {election.title}
-                                                    </h3>
-                                                </div>
-                                                <p
-                                                    className="text-sm mb-3"
-                                                    style={{
-                                                        color: colors.text.secondary,
-                                                        fontFamily: "'Inter', sans-serif"
-                                                    }}
-                                                >
-                                                    {election.description}
-                                                </p>
-                                                <div className="flex items-center gap-4 text-xs">
-                                                    <span
-                                                        className="flex items-center gap-1"
-                                                        style={{
-                                                            color: colors.text.tertiary,
-                                                            fontFamily: "'Inter', sans-serif"
-                                                        }}
-                                                    >
-                                                        <CalendarIcon className="w-3 h-3"/>
-                                                        {election.startDate.toLocaleDateString('en-US', {
-                                                            month: 'short',
-                                                            day: 'numeric'
-                                                        })} - {election.endDate.toLocaleDateString('en-US', {
-                                                        month: 'short',
-                                                        day: 'numeric'
-                                                    })}
-                                                    </span>
-                                                    <span
-                                                        className="flex items-center gap-1"
-                                                        style={{
-                                                            color: colors.text.tertiary,
-                                                            fontFamily: "'Inter', sans-serif"
-                                                        }}
-                                                    >
-                                                        <Users className="w-3 h-3"/>
-                                                        {election.totalVoters} eligible voters
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div
-                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold"
-                                                style={{
-                                                    backgroundColor: `${getStatusColor(election.status)}20`,
-                                                    color: getStatusColor(election.status),
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                {getStatusIcon(election.status)}
-                                                {election.status === 'ONGOING' ? 'Running' : election.status.charAt(0) + election.status.slice(1).toLowerCase()}
-                                            </div>
-                                        </div>
-
-                                        {election.status === 'ONGOING' && (
-                                            <>
-                                                {/* Progress Bar */}
-                                                <div className="mb-3">
-                                                    <div className="flex justify-between text-xs mb-2">
-                                                        <span
-                                                            style={{
-                                                                color: colors.text.tertiary,
-                                                                fontFamily: "'Inter', sans-serif"
-                                                            }}
-                                                        >
-                                                            Voter Turnout
-                                                        </span>
-                                                        <span
-                                                            className="font-bold"
-                                                            style={{
-                                                                color: colors.text.primary,
-                                                                fontFamily: "'Inter', sans-serif"
-                                                            }}
-                                                        >
-                                                            {Math.round((election.totalVotesCast / election.totalVoters) * 100)}%
-                                                        </span>
-                                                    </div>
-                                                    <div
-                                                        className="h-2 rounded-full overflow-hidden"
-                                                        style={{backgroundColor: colors.bg.tertiary}}
-                                                    >
-                                                        <div
-                                                            className="h-full transition-all duration-500"
-                                                            style={{
-                                                                width: `${(election.totalVotesCast / election.totalVoters) * 100}%`,
-                                                                backgroundColor: colors.accent.success
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                <button
-                                                    className="w-full py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-[1.02]"
-                                                    style={{
-                                                        backgroundColor: colors.accent.primary,
-                                                        color: '#ffffff',
-                                                        fontFamily: "'Inter', sans-serif"
-                                                    }}
-                                                >
-                                                    Vote Now
-                                                </button>
-                                            </>
-                                        )}
-
-                                        {election.status === 'UPCOMING' && (
-                                            <button
-                                                className="w-full py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-[1.02]"
-                                                style={{
-                                                    backgroundColor: colors.bg.tertiary,
-                                                    color: colors.text.primary,
-                                                    border: `1px solid ${colors.border.medium}`,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                View Details
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+                {/* Main Dashboard Grid */}
+                <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+                    {/* Left Column - Profile & Stats */}
+                    <div className="lg:col-span-1 space-y-6">
+                        <div className="animate-fadeInLeft" style={{ animationDelay: '0.1s' }}>
+                            <ProfileCard isDarkMode={isDarkMode} profile={userProfile} />
+                        </div>
+                        
+                        <div className="animate-fadeInLeft" style={{ animationDelay: '0.2s' }}>
+                            <VotingStatsCard isDarkMode={isDarkMode} stats={votingStats} />
+                        </div>
+                        
+                        <div className="animate-fadeInLeft" style={{ animationDelay: '0.3s' }}>
+                            <ElectionCalendar 
+                                isDarkMode={isDarkMode} 
+                                elections={[...runningElections, ...upcomingElections]}
+                            />
+                        </div>
+                        
+                        <div className="animate-fadeInLeft" style={{ animationDelay: '0.4s' }}>
+                            <NotificationsPanel 
+                                isDarkMode={isDarkMode} 
+                                notifications={notifications}
+                                onMarkAsRead={markNotificationAsRead}
+                            />
                         </div>
                     </div>
 
-                    {/* Right Column - Calendar & Results */}
-                    <div className="space-y-6">
-
-                        {/* Calendar Card */}
-                        <div
-                            className="rounded-2xl p-6 animate-fadeInRight"
-                            style={{
-                                backgroundColor: colors.bg.card,
-                                border: `1px solid ${colors.border.subtle}`,
-                                boxShadow: `0 4px 16px ${colors.glow.secondary}`,
-                                animationDelay: '100ms'
-                            }}
-                        >
-                            <div className="flex items-center gap-3 mb-6">
-                                <div
-                                    className="w-10 h-10 rounded-lg flex items-center justify-center"
-                                    style={{
-                                        backgroundColor: colors.accent.secondary,
-                                        boxShadow: `0 4px 16px ${colors.glow.secondary}`
-                                    }}
-                                >
-                                    <CalendarIcon className="w-5 h-5 text-white"/>
-                                </div>
-                                <h2
-                                    className="text-xl font-bold"
-                                    style={{
-                                        fontFamily: "'Sora', sans-serif",
-                                        color: colors.text.primary
-                                    }}
-                                >
-                                    Calendar
-                                </h2>
-                            </div>
-
-                            <div className="space-y-3">
-                                {calendarEvents.map((event, index) => (
-                                    <div
-                                        key={event.id}
-                                        className="p-4 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
-                                        style={{
-                                            backgroundColor: colors.bg.elevated,
-                                            border: `1px solid ${colors.border.subtle}`,
-                                            animationDelay: `${index * 100}ms`
-                                        }}
-                                    >
-                                        <div className="flex items-start gap-3">
-                                            <div
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                                                style={{
-                                                    backgroundColor: `${getEventTypeColor(event.type)}20`,
-                                                    border: `2px solid ${getEventTypeColor(event.type)}30`
-                                                }}
-                                            >
-                                                <div
-                                                    className="w-2 h-2 rounded-full"
-                                                    style={{backgroundColor: getEventTypeColor(event.type)}}
-                                                />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h3
-                                                    className="text-sm font-bold mb-1"
-                                                    style={{
-                                                        fontFamily: "'Sora', sans-serif",
-                                                        color: colors.text.primary
-                                                    }}
-                                                >
-                                                    {event.title}
-                                                </h3>
-                                                <div className="flex items-center gap-2 text-xs">
-                                                    <span
-                                                        className="font-semibold"
-                                                        style={{
-                                                            color: colors.text.secondary,
-                                                            fontFamily: "'Inter', sans-serif"
-                                                        }}
-                                                    >
-                                                        {event.date.toLocaleDateString('en-US', {
-                                                            month: 'short',
-                                                            day: 'numeric'
-                                                        })}
-                                                    </span>
-                                                    <span
-                                                        style={{
-                                                            color: colors.text.tertiary,
-                                                            fontFamily: "'Inter', sans-serif"
-                                                        }}
-                                                    >
-                                                        •
-                                                    </span>
-                                                    <span
-                                                        style={{
-                                                            color: colors.text.tertiary,
-                                                            fontFamily: "'Inter', sans-serif"
-                                                        }}
-                                                    >
-                                                        {event.time}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                    {/* Right Column - Elections */}
+                    <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+                        {/* Running Elections */}
+                        <div className="animate-fadeInRight" style={{ animationDelay: '0.1s' }}>
+                            <RunningElections isDarkMode={isDarkMode} elections={runningElections} />
                         </div>
 
-                        {/* Results Card */}
-                        <div
-                            className="rounded-2xl p-6 animate-fadeInRight"
-                            style={{
-                                backgroundColor: colors.bg.card,
-                                border: `1px solid ${colors.border.subtle}`,
-                                boxShadow: `0 4px 16px ${colors.glow.primary}`,
-                                animationDelay: '200ms'
-                            }}
-                        >
-                            <div className="flex items-center gap-3 mb-6">
-                                <div
-                                    className="w-10 h-10 rounded-lg flex items-center justify-center"
-                                    style={{
-                                        backgroundColor: colors.accent.success,
-                                        boxShadow: `0 4px 16px rgba(34, 197, 94, 0.3)`
-                                    }}
-                                >
-                                    <BarChart3 className="w-5 h-5 text-white"/>
-                                </div>
-                                <h2
-                                    className="text-xl font-bold"
-                                    style={{
-                                        fontFamily: "'Sora', sans-serif",
-                                        color: colors.text.primary
-                                    }}
-                                >
-                                    Results
-                                </h2>
-                            </div>
+                        {/* Upcoming Elections */}
+                        <div className="animate-fadeInRight" style={{ animationDelay: '0.2s' }}>
+                            <UpcomingElections isDarkMode={isDarkMode} elections={upcomingElections} />
+                        </div>
 
-                            <div className="space-y-4">
-                                {recentResults.map((result, index) => (
-                                    <div
-                                        key={index}
-                                        className="p-4 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
-                                        style={{
-                                            backgroundColor: colors.bg.elevated,
-                                            border: `1px solid ${colors.border.subtle}`,
-                                            animationDelay: `${index * 100}ms`
-                                        }}
-                                    >
-                                        <div className="flex items-start gap-3 mb-3">
-                                            <div
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                                                style={{
-                                                    backgroundColor: `${colors.accent.success}20`
-                                                }}
-                                            >
-                                                <Award className="w-4 h-4" style={{color: colors.accent.success}}/>
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h3
-                                                    className="text-sm font-bold mb-1"
-                                                    style={{
-                                                        fontFamily: "'Sora', sans-serif",
-                                                        color: colors.text.primary
-                                                    }}
-                                                >
-                                                    {result.electionTitle}
-                                                </h3>
-                                                <p
-                                                    className="text-xs mb-2"
-                                                    style={{
-                                                        color: colors.text.tertiary,
-                                                        fontFamily: "'Inter', sans-serif"
-                                                    }}
-                                                >
-                                                    {result.publishedAt.toLocaleDateString('en-US', {
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                        year: 'numeric'
-                                                    })}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            className="p-3 rounded-lg mb-2"
-                                            style={{
-                                                backgroundColor: colors.bg.tertiary,
-                                                border: `1px solid ${colors.border.subtle}`
-                                            }}
-                                        >
-                                            <div className="flex items-center justify-between mb-1">
-                                                <span
-                                                    className="text-sm font-bold"
-                                                    style={{
-                                                        color: colors.text.primary,
-                                                        fontFamily: "'Inter', sans-serif"
-                                                    }}
-                                                >
-                                                    Winner: {result.winner}
-                                                </span>
-                                                <span
-                                                    className="text-sm font-bold"
-                                                    style={{
-                                                        color: colors.accent.success,
-                                                        fontFamily: "'Inter', sans-serif"
-                                                    }}
-                                                >
-                                                    {result.winPercentage}%
-                                                </span>
-                                            </div>
-                                            <div
-                                                className="h-1.5 rounded-full overflow-hidden"
-                                                style={{backgroundColor: colors.bg.secondary}}
-                                            >
-                                                <div
-                                                    className="h-full transition-all duration-500"
-                                                    style={{
-                                                        width: `${result.winPercentage}%`,
-                                                        backgroundColor: colors.accent.success
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center justify-between text-xs">
-                                            <span
-                                                style={{
-                                                    color: colors.text.tertiary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                Total Votes: {result.totalVotes}
-                                            </span>
-                                            <button
-                                                className="font-semibold flex items-center gap-1 transition-all duration-200 hover:gap-2"
-                                                style={{
-                                                    color: colors.accent.primary,
-                                                    fontFamily: "'Inter', sans-serif"
-                                                }}
-                                            >
-                                                View Details
-                                                <ChevronRight className="w-3 h-3"/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                        {/* Previous Elections */}
+                        <div className="animate-fadeInRight" style={{ animationDelay: '0.3s' }}>
+                            <PreviousElections isDarkMode={isDarkMode} elections={previousElections} />
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
 
             {/* CSS Animations */}
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
                 
-                @keyframes fadeInDown {
+                @keyframes fadeInUp {
                     from {
                         opacity: 0;
-                        transform: translateY(-20px);
+                        transform: translateY(20px);
                     }
                     to {
                         opacity: 1;
@@ -799,20 +386,32 @@ export default function VoteSecureDashboard() {
                         transform: translate(0, 0);
                     }
                     100% {
-                        transform: translate(40px, 40px);
+                        transform: translate(48px, 48px);
                     }
                 }
                 
-                .animate-fadeInDown {
-                    animation: fadeInDown 0.6s ease-out forwards;
+                @keyframes pulse {
+                    0%, 100% {
+                        opacity: 0.2;
+                    }
+                    50% {
+                        opacity: 0.35;
+                    }
+                }
+                
+                .animate-fadeInUp {
+                    animation: fadeInUp 0.6s ease-out forwards;
+                    opacity: 0;
                 }
                 
                 .animate-fadeInLeft {
-                    animation: fadeInLeft 0.7s ease-out forwards;
+                    animation: fadeInLeft 0.6s ease-out forwards;
+                    opacity: 0;
                 }
                 
                 .animate-fadeInRight {
-                    animation: fadeInRight 0.7s ease-out forwards;
+                    animation: fadeInRight 0.6s ease-out forwards;
+                    opacity: 0;
                 }
                 
                 .animate-fadeIn {
