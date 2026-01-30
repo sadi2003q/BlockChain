@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { getColor } from "@/lib/_colors";
-import { ThemeToggleButton } from "@/components/signin/ThemeToggleButton";
 import { DashboardHeader } from "@/components/dashboard/Header";
 import { DashboardAnimation } from "@/components/dashboard/Animation";
 import { ProfileCard } from "@/components/dashboard/ProfileCard";
@@ -226,6 +225,10 @@ export default function Dashboard() {
         }
     }
 
+    const RoutingLink_Profile = () => {
+        router.push('/profile');
+    }
+
 
     return (
         <div
@@ -233,7 +236,6 @@ export default function Dashboard() {
             style={{ backgroundColor: colors.bg.primary }}
         >
             {/* Dark Mode Toggle Button */}
-            <ThemeToggleButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
             {/* Animated Background */}
             <DashboardAnimation isDarkMode={isDarkMode} />
@@ -246,6 +248,8 @@ export default function Dashboard() {
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 showLogoutConfirmation={showLogoutConfirmation}
+                setIsDarkMode={setIsDarkMode}
+                RoutingLink_Profile={RoutingLink_Profile}
             />
 
             {/* Main Content */}

@@ -4,6 +4,7 @@ import React from 'react';
 import { getColor } from '@/lib/_colors';
 import { Bell, Menu, Vote, LayoutDashboard, History, LogOut, Home } from 'lucide-react';
 import { UserProfile } from '@/app/dashboard/page';
+import {ThemeToggleButton} from "@/components/signin/ThemeToggleButton";
 
 interface DashboardHeaderProps {
     isDarkMode: boolean;
@@ -12,6 +13,8 @@ interface DashboardHeaderProps {
     activeTab: 'overview' | 'elections' | 'history' | 'notifications';
     setActiveTab: (tab: 'overview' | 'elections' | 'history' | 'notifications') => void;
     showLogoutConfirmation(): void
+    setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>
+    RoutingLink_Profile(): void
 }
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
@@ -20,7 +23,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     unreadCount,
     activeTab,
     setActiveTab,
-    showLogoutConfirmation
+    showLogoutConfirmation,
+    setIsDarkMode,
+    RoutingLink_Profile
 }) => {
     const colors = getColor(isDarkMode);
 
@@ -94,10 +99,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     </nav>
 
                     {/* Right Section */}
-                    <div className="flex items-center gap-2 sm:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4 cursor-pointer">
+
+                        <ThemeToggleButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+
+
                         {/* Home Link */}
                         <button
-                            className="p-2 sm:p-2.5 rounded-xl transition-all duration-300 hover:scale-105"
+                            className="p-2 sm:p-2.5 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer"
                             style={{
                                 backgroundColor: colors.bg.card,
                                 color: colors.text.secondary
@@ -109,7 +118,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
                         {/* Notifications Bell */}
                         <button
-                            className="relative p-2 sm:p-2.5 rounded-xl transition-all duration-300 hover:scale-105"
+                            className="relative p-2 sm:p-2.5 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer"
                             style={{
                                 backgroundColor: colors.bg.card,
                                 color: colors.text.secondary
@@ -130,6 +139,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                         <div
                             className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 pl-2 sm:pl-3 rounded-xl"
                             style={{ backgroundColor: colors.bg.card }}
+                            onClick={RoutingLink_Profile}
                         >
                             <div className="hidden sm:block text-right">
                                 <p
