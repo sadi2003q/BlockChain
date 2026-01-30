@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { MapPin, AlertCircle } from 'lucide-react';
 import {FocusedField} from "@/lib/Schema_Lib/signup.schema";
+import {_colorType} from "@/lib/_colors";
 
 interface AddressFieldProps {
     value: string;
@@ -9,7 +10,7 @@ interface AddressFieldProps {
     onBlur: () => void;
     error?: string;
     focusedField: FocusedField;
-    colors: any;
+    colors: _colorType;
 }
 
 export const AddressField: React.FC<AddressFieldProps> = ({

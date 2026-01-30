@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Phone, AlertCircle } from 'lucide-react';
 import { FocusedField } from '@/lib/Schema_Lib/signup.schema';
+import {_colorType} from "@/lib/_colors";
 
 interface PhoneFieldProps {
     value: string;
@@ -9,7 +10,7 @@ interface PhoneFieldProps {
     onBlur: () => void;
     error?: string;
     focusedField: FocusedField;
-    colors: any;
+    colors: _colorType;
 }
 
 export const PhoneField: React.FC<PhoneFieldProps> = ({

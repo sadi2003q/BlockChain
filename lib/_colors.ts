@@ -1,7 +1,40 @@
 
 
+export type _colorType= {
+    bg: {
+        primary: string
+        secondary: string
+        tertiary: string
+        card: string
+        elevated: string
+    }
+    text: {
+        primary: string
+        secondary: string
+        tertiary: string
+        muted: string
+    }
+    accent: {
+        primary: string
+        secondary: string
+        success: string
+        warning: string
+        danger: string
+    }
+    border: {
+        subtle: string,
+        medium: string
+        strong: string
+    },
 
-export const getColor = (isDarkMode: boolean) => ({
+    glow: {
+        primary: string,
+        secondary: string,
+    },
+}
+
+
+export const getColor = (isDarkMode: boolean): _colorType => ({
     bg: {
         primary: isDarkMode ? '#0a0a0a' : '#f3e9dc',
         secondary: isDarkMode ? '#141414' : '#ede3d6',

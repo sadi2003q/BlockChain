@@ -1,12 +1,13 @@
 import React, { ChangeEvent } from 'react';
 import { Upload, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
+import {_colorType} from "@/lib/_colors";
 
 interface ProfileImageUploadProps {
     imagePreview: string | null;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     error?: string;
-    colors: any;
+    colors: _colorType;
 }
 
 export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({

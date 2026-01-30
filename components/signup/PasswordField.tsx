@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { FocusedField } from '@/lib/Schema_Lib/signup.schema';
+import {_colorType} from "@/lib/_colors";
 
 interface PasswordFieldProps {
     value: string;
@@ -11,7 +12,7 @@ interface PasswordFieldProps {
     focusedField: FocusedField;
     showPassword: boolean;
     setShowPassword: (show: boolean) => void;
-    colors: any;
+    colors: _colorType;
 }
 
 export const PasswordField: React.FC<PasswordFieldProps> = ({

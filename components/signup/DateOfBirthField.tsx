@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Calendar, AlertCircle } from 'lucide-react';
 import { FocusedField } from '@/lib/Schema_Lib/signup.schema';
+import {_colorType} from "@/lib/_colors";
 
 interface DateOfBirthFieldProps {
     value: string;
@@ -9,7 +10,7 @@ interface DateOfBirthFieldProps {
     onBlur: () => void;
     error?: string;
     focusedField: FocusedField;
-    colors: any;
+    colors: _colorType
 }
 
 export const DateOfBirthField: React.FC<DateOfBirthFieldProps> = ({

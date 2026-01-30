@@ -1,12 +1,13 @@
 import React from 'react';
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import {_colorType} from "@/lib/_colors";
 
 interface NavigationButtonsProps {
     currentStep: number;
     isLoading: boolean;
     onBack: () => void;
     onNext: () => void;
-    colors: any;
+    colors: _colorType;
 }
 
 export const NavigationButtons: React.FC<NavigationButtonsProps> = ({

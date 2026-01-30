@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Mail, AlertCircle } from 'lucide-react';
 import { FocusedField } from '@/lib/Schema_Lib/signup.schema';
+import {_colorType} from "@/lib/_colors";
 
 interface EmailFieldProps {
     value: string;
@@ -9,7 +10,7 @@ interface EmailFieldProps {
     onBlur: () => void;
     error?: string;
     focusedField: FocusedField;
-    colors: any;
+    colors: _colorType;
 }
 
 export const EmailField: React.FC<EmailFieldProps> = ({

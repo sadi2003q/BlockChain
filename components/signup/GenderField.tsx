@@ -1,12 +1,13 @@
 import React, { ChangeEvent } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { GenderType } from '@/lib/Schema_Lib/signup.schema';
+import {_colorType} from "@/lib/_colors";
 
 interface GenderFieldProps {
     value: string | GenderType;
     onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
     error?: string;
-    colors: any;
+    colors: _colorType;
 }
 
 export const GenderField: React.FC<GenderFieldProps> = ({
