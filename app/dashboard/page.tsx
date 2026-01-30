@@ -14,6 +14,7 @@ import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { ElectionCalendar } from "@/components/dashboard/ElectionCalendar";
 import {WelcomeMessage} from "@/components/dashboard/WelcomeMessage";
+import {LogoutConfirmationModal} from "@/components/dashboard/signOutModel";
 
 export interface UserProfile {
     name: string;
@@ -50,6 +51,7 @@ export interface Notification {
 export default function Dashboard() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [activeTab, setActiveTab] = useState<'overview' | 'elections' | 'history' | 'notifications'>('overview');
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState<boolean>(false);
 
     const colors = getColor(isDarkMode);
 
@@ -201,6 +203,16 @@ export default function Dashboard() {
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
+
+
+
+
+
+
+
+    //============================ FUNCTIONS =========================
+    const showLogoutConfirmation = () => setShowLogoutConfirm(true)
+
     return (
         <div
             className="min-h-screen transition-colors duration-500 relative overflow-hidden"
@@ -219,6 +231,7 @@ export default function Dashboard() {
                 unreadCount={unreadCount}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
+                showLogoutConfirmation={showLogoutConfirmation}
             />
 
             {/* Main Content */}
@@ -266,6 +279,19 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+
+
+            {/* Delete Confirmation Modal */}
+            {showLogoutConfirm && (
+                <LogoutConfirmationModal
+                    onCancel={() => setShowLogoutConfirm(false)}
+                    onConfirm={() => setShowLogoutConfirm(false)}
+                    isDarkMode={isDarkMode}
+                />
+            )}
+
+
 
             {/* CSS Animations */}
             <style>{`

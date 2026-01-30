@@ -73,7 +73,8 @@ interface MenuItem {
  * @returns {JSX.Element} The complete profile page with all subcomponents and styling
  */
 export default function VoteSecureProfile(): JSX.Element {
-    // ==================== State Variables ====================
+
+    // ==================== STATE VARIABLES ====================
     
     /** Tracks whether the application is in dark mode or light mode */
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);

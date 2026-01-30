@@ -11,6 +11,7 @@ interface DashboardHeaderProps {
     unreadCount: number;
     activeTab: 'overview' | 'elections' | 'history' | 'notifications';
     setActiveTab: (tab: 'overview' | 'elections' | 'history' | 'notifications') => void;
+    showLogoutConfirmation(): void
 }
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
@@ -18,7 +19,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     userProfile,
     unreadCount,
     activeTab,
-    setActiveTab
+    setActiveTab,
+    showLogoutConfirmation
 }) => {
     const colors = getColor(isDarkMode);
 
@@ -151,6 +153,13 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                             </div>
                         </div>
 
+
+
+
+
+
+
+
                         {/* Logout */}
                         <button
                             className="hidden sm:flex p-2.5 rounded-xl transition-all duration-300 hover:scale-105"
@@ -158,6 +167,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                                 backgroundColor: '#ef444420',
                                 color: '#ef4444'
                             }}
+                            onClick={showLogoutConfirmation}
                         >
                             <LogOut className="w-5 h-5" />
                         </button>
