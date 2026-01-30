@@ -10,6 +10,8 @@ export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isDarkMode }) =>
     const colors = getColor(isDarkMode);
 
     return (
+        <div className="animate-fadeInUp" style={{ animationDelay: '0.7s' }}>
+
         <div
             className="mt-6 p-5 rounded-2xl"
             style={{
@@ -57,5 +59,6 @@ export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isDarkMode }) =>
                 </div>
             </div>
         </div>
+            </div>
     );
 };

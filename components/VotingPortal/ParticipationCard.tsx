@@ -13,6 +13,8 @@ export const ParticipationCard: React.FC<ParticipationCardProps> = ({ isDarkMode
     const turnoutPercentage = Math.round((electionInfo.votedCount / electionInfo.totalVoters) * 100);
 
     return (
+        <div className="animate-fadeInLeft" style={{ animationDelay: '0.3s' }}>
+
         <div
             className="p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02]"
             style={{
@@ -117,5 +119,6 @@ export const ParticipationCard: React.FC<ParticipationCardProps> = ({ isDarkMode
                 </div>
             </div>
         </div>
+            </div>
     );
 };

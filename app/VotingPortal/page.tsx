@@ -9,12 +9,14 @@ import { ElectionInfoCard } from "@/components/VotingPortal/ElectionInfoCard";
 import { TimeRemainingCard } from "@/components/VotingPortal/TimeRemainingCard";
 import { ParticipationCard } from "@/components/VotingPortal/ParticipationCard";
 import { VoterInfoCard } from "@/components/VotingPortal/VoterInfoCard";
-import { CandidateCard } from "@/components/VotingPortal/CandidateCard";
 import { VoteButton } from "@/components/VotingPortal/VoteButton";
 import { SecurityNotice } from "@/components/VotingPortal/SecurityNotice";
 import { ConfirmVoteModal } from "@/components/VotingPortal/ConfirmVoteModal";
 import { VoteSuccessAlert } from "@/components/VotingPortal/VoteSuccessAlert";
 import { VotePendingAlert } from "@/components/VotingPortal/VotePendingAlert";
+import {SectionHeader} from "@/components/VotingPortal/SectionHeader";
+import {CandidateList} from "@/components/VotingPortal/CandidateList";
+import {AnimatedGlow} from "@/components/VotingPortal/AnimatedGlow_VotingPortal";
 
 export interface Candidate {
     id: number;
@@ -170,29 +172,29 @@ export default function VotingPortal() {
 
                 {/* Main Grid Layout */}
                 <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+
+
                     {/* Left Column - Info Cards */}
                     <div className="lg:col-span-1 space-y-6">
-                        <div className="animate-fadeInLeft" style={{ animationDelay: '0.1s' }}>
-                            <ElectionInfoCard isDarkMode={isDarkMode} electionInfo={electionInfo} />
-                        </div>
+                            <ElectionInfoCard
+                                isDarkMode={isDarkMode}
+                                electionInfo={electionInfo}
+                            />
 
-                        <div className="animate-fadeInLeft" style={{ animationDelay: '0.2s' }}>
-                            <TimeRemainingCard isDarkMode={isDarkMode} timeRemaining={timeRemaining} />
-                        </div>
+                            <TimeRemainingCard
+                                isDarkMode={isDarkMode}
+                                timeRemaining={timeRemaining}
+                            />
 
-                        <div className="animate-fadeInLeft" style={{ animationDelay: '0.3s' }}>
                             <ParticipationCard
                                 isDarkMode={isDarkMode}
                                 electionInfo={electionInfo}
                             />
-                        </div>
 
-                        <div className="animate-fadeInLeft" style={{ animationDelay: '0.4s' }}>
                             <VoterInfoCard
                                 isDarkMode={isDarkMode}
                                 userData={userData}
                             />
-                        </div>
                     </div>
 
                         {/* Right Column - Voting Section */}
@@ -205,62 +207,33 @@ export default function VotingPortal() {
                                 boxShadow: `0 24px 48px ${colors.glow.primary}`
                             }}
                         >
+
                             {/* Subtle glow effect */}
-                            <div
-                                className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none"
-                                style={{ background: colors.accent.primary }}
-                            />
+                            <AnimatedGlow isDarkMode={isDarkMode} />
 
                             {/* Section Header */}
-                            <div className="mb-6 sm:mb-8 relative z-10">
-                                <h2
-                                    className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3"
-                                    style={{ fontFamily: "'Sora', sans-serif", color: colors.text.primary }}
-                                >
-                                    Cast Your Vote
-                                </h2>
-                                <p
-                                    className="text-sm sm:text-base"
-                                    style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
-                                >
-                                    Select one candidate below. Your choice is completely anonymous and secured by blockchain technology.
-                                </p>
-                            </div>
+                            <SectionHeader isDarkMode={isDarkMode} title="Cast Your Vote"/>
 
                             {/* Candidates List */}
-                            <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8 relative z-10">
-                                {candidates.map((candidate, index) => (
-                                    <div
-                                        key={candidate.id}
-                                        className="animate-fadeInUp"
-                                        style={{ animationDelay: `${0.3 + index * 0.1}s` }}
-                                    >
-                                        <CandidateCard
-                                            isDarkMode={isDarkMode}
-                                            candidate={candidate}
-                                            isSelected={selectedCandidate === candidate.id}
-                                            hasVoted={hasVoted}
-                                            onSelect={() => !hasVoted && setSelectedCandidate(candidate.id)}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
+                            <CandidateList
+                                candidates={candidates}
+                                isDarkMode={isDarkMode}
+                                hasVoted={hasVoted}
+                                setSelectedCandidate={setSelectedCandidate}
+                                selectedCandidate={null}
+                            />
 
                             {/* Vote Button */}
                             {!hasVoted && (
-                                <div className="animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
                                     <VoteButton
                                         isDarkMode={isDarkMode}
                                         selectedCandidate={selectedCandidate}
                                         onClick={handleVote}
                                     />
-                                </div>
                             )}
 
                             {/* Security Notice */}
-                            <div className="animate-fadeInUp" style={{ animationDelay: '0.7s' }}>
-                                <SecurityNotice isDarkMode={isDarkMode} />
-                            </div>
+                            <SecurityNotice isDarkMode={isDarkMode} />
                         </div>
                     </div>
                 </div>

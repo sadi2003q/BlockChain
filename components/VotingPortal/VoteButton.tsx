@@ -17,6 +17,8 @@ export const VoteButton: React.FC<VoteButtonProps> = ({
     const isEnabled = selectedCandidate !== null;
 
     return (
+        <div className="animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
+
         <button
             onClick={onClick}
             disabled={!isEnabled}
@@ -37,5 +39,6 @@ export const VoteButton: React.FC<VoteButtonProps> = ({
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             )}
         </button>
+            </div>
     );
 };

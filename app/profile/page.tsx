@@ -47,7 +47,7 @@ export default function VoteSecureProfile() {
         address: userData.address
     });
 
-    // Get colors from utility function
+    // Get colors from a utility function
     const colors = getColor(isDarkMode);
 
     const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {

@@ -12,6 +12,7 @@ export const VoterInfoCard: React.FC<VoterInfoCardProps> = ({ isDarkMode, userDa
     const colors = getColor(isDarkMode);
 
     return (
+        <div className="animate-fadeInLeft" style={{ animationDelay: '0.4s' }}>
         <div
             className="p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02]"
             style={{
@@ -106,5 +107,6 @@ export const VoterInfoCard: React.FC<VoterInfoCardProps> = ({ isDarkMode, userDa
                 </div>
             </div>
         </div>
+            </div>
     );
 };

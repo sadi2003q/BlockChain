@@ -19,6 +19,8 @@ export const TimeRemainingCard: React.FC<TimeRemainingCardProps> = ({ isDarkMode
     ];
 
     return (
+        <div className="animate-fadeInLeft" style={{ animationDelay: '0.2s' }}>
+
         <div
             className="p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02]"
             style={{
@@ -72,5 +74,6 @@ export const TimeRemainingCard: React.FC<TimeRemainingCardProps> = ({ isDarkMode
                 ))}
             </div>
         </div>
+            </div>
     );
 };
