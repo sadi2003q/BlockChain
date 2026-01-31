@@ -22,29 +22,31 @@
 
 "use client"
 
-import React, {useState, ChangeEvent, JSX} from 'react';
-import {User, Settings, LogOut, CheckCircle, LucideIcon} from 'lucide-react';
-import { getColor } from '@/lib/_colors';
-import { 
-    userData,
-    voterInfo,
-    votingStatistics,
-    verificationDocuments,
+import React, {ChangeEvent, JSX, useEffect, useState} from 'react';
+import {CheckCircle, LogOut, LucideIcon, Settings, User} from 'lucide-react';
+import {getColor} from '@/lib/_colors';
+import {
     eligibleElections,
-    TabItem
+    TabItem,
+    userData,
+    verificationDocuments,
+    voterInfo,
+    votingStatistics
 } from '@/lib/Schema_Lib/profile.schema';
 
 // Component Imports
-import { ProfileHeader } from '@/components/profile/ProfileHeader';
-import { AnimatedBackground } from '@/components/profile/AnimatedBackground';
-import { ProfileImageCard } from '@/components/profile/ProfileImageCard';
-import { VotingStatisticsCard } from '@/components/profile/VotingStatisticsCard';
-import { ProfileTabs } from '@/components/profile/ProfileTabs';
-import { PersonalInfoForm } from '@/components/profile/PersonalInfoForm';
-import { EligibilityStatusCard } from '@/components/profile/EligibilityStatusCard';
-import { VerificationDocumentsCard } from '@/components/profile/VerificationDocumentsCard';
-import { EligibleElectionsCard } from '@/components/profile/EligibleElectionsCard';
-import { PageHeader } from '@/components/profile/PageHeader';
+import {ProfileHeader} from '@/components/profile/ProfileHeader';
+import {AnimatedBackground} from '@/components/profile/AnimatedBackground';
+import {ProfileImageCard} from '@/components/profile/ProfileImageCard';
+import {VotingStatisticsCard} from '@/components/profile/VotingStatisticsCard';
+import {ProfileTabs} from '@/components/profile/ProfileTabs';
+import {PersonalInfoForm} from '@/components/profile/PersonalInfoForm';
+import {EligibilityStatusCard} from '@/components/profile/EligibilityStatusCard';
+import {VerificationDocumentsCard} from '@/components/profile/VerificationDocumentsCard';
+import {EligibleElectionsCard} from '@/components/profile/EligibleElectionsCard';
+import {PageHeader} from '@/components/profile/PageHeader';
+import axios from "axios";
+import {USER_GENDER, USER_MODEL} from "@/model/user.model";
 
 /**
  * MenuItem Interface
@@ -95,12 +97,16 @@ export default function VoteSecureProfile(): JSX.Element {
      * Form state containing editable user profile information
      * Used in the Profile Information tab for user data updates
      */
-    const [userFormData, setUserFormData] = useState({
-        fullName: userData.name,
+    const [userFormData, setUserFormData] = useState<USER_MODEL>({
+        id: "",
+        name: userData.name,
         email: userData.email,
         phone: userData.phone,
         dateOfBirth: userData.dateOfBirth.toISOString().split('T')[0],
-        address: userData.address
+        address: userData.address,
+        profileImage: null,
+        gender: USER_GENDER.Female,
+        isVerified: userData.isVerified
     });
 
     /**
@@ -168,6 +174,51 @@ export default function VoteSecureProfile(): JSX.Element {
         { id: 'eligibility', label: 'Voting Eligibility', icon: CheckCircle }
     ];
 
+
+
+
+
+
+
+    // ==================== FUNCTIONS ====================
+    useEffect(() => {
+        const FetchData = async () => {
+            try {
+                const res = await axios.get("/api/user/profile/personalInfo", {
+                    withCredentials: true
+                });
+
+                console.log('data found : ', res.data);
+
+                setUserFormData({
+                    id: res.data._id,
+                    gender: res.data.gender,
+                    name: res.data.name,
+                    email: res.data.email,
+                    phone: res.data.phone,
+                    dateOfBirth: new Date(res.data.dateOfBirth)
+                        .toISOString()
+                        .split("T")[0],
+                    address: res.data.address,
+                    profileImage: res.data.profileImage ?? null,
+                    isVerified: res.data.isVerified
+                });
+
+
+                setProfileImage(res.data.profileImage ?? null)
+
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        FetchData().then();
+    }, []);
+
+
+
+
     return (
         <div
             className="min-h-screen transition-colors duration-500 relative overflow-hidden"
@@ -191,8 +242,8 @@ export default function VoteSecureProfile(): JSX.Element {
                 notificationCount={3}
                 showProfileMenu={showProfileMenu}
                 setShowProfileMenu={setShowProfileMenu}
-                userName={userData.name}
-                userEmail={userData.email}
+                userName={userFormData.name}
+                userEmail={userFormData.email}
                 menuItems={menuItems}
                 colors={colors}
             />
@@ -242,9 +293,9 @@ export default function VoteSecureProfile(): JSX.Element {
                                  */}
                                 <ProfileImageCard
                                     profileImage={profileImage}
-                                    userName={userData.name}
+                                    userName={userFormData.name}
                                     voterId={voterInfo.voterId}
-                                    isVerified={userData.isVerified}
+                                    isVerified={userFormData.isVerified}
                                     onImageUpload={handleImageUpload}
                                     colors={colors}
                                 />

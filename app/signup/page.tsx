@@ -24,7 +24,7 @@ import {ProfileImageUpload} from "@/components/signup/ProfileImageUpload";
 import {NavigationButtons} from "@/components/signup/NavigationButtons";
 import {ForewordLink_SignIn} from "@/components/signup/ForewordLink_SignIn";
 import {ValidationErrors, FocusedField, GenderType} from "@/lib/Schema_Lib/signup.schema";
-import {USER_MODEL} from "@/model/user.model";
+import {USER_MODEL_SIGNUP} from "@/model/user.model";
 import axios from "axios";
 import {useRouter} from "next/navigation";
 import toast from "react-hot-toast";
@@ -36,7 +36,7 @@ export default function VoteSecureSignUp() {
     // =================  STATE VARIABLES =================
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [currentStep, setCurrentStep] = useState<number>(1);
-    const [formData, setFormData] = useState<USER_MODEL>({
+    const [formData, setFormData] = useState<USER_MODEL_SIGNUP>({
         name: 'Adnan Abdullah',
         email: 'Adnan@gmail.com',
         phone: '01999477414',

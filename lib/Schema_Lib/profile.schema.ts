@@ -1,7 +1,7 @@
 // Enums from User schema
 import {LucideIcon} from "lucide-react";
+import {USER_GENDER} from "@/model/user.model";
 
-export type Gender = 'MALE' | 'FEMALE' | 'THIRD_GENDER';
 export type VerificationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 // User interface based on schema
@@ -13,7 +13,7 @@ export interface User {
     passwordHash: string;
     dateOfBirth: Date;
     age: number;
-    gender: Gender;
+    gender: USER_GENDER;
     address: string;
     isVerified: boolean;
     verificationStatus: VerificationStatus;
@@ -74,7 +74,7 @@ export const userData: User = {
     passwordHash: '', // Not exposed in frontend
     dateOfBirth: new Date('1998-05-15'),
     age: 26,
-    gender: 'MALE',
+    gender: USER_GENDER.Male,
     address: '123 Campus Drive, University City, ST 12345',
     isVerified: true,
     verificationStatus: 'APPROVED',

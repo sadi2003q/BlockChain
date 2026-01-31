@@ -1,24 +1,13 @@
 import React, { ChangeEvent } from 'react';
 import { User, Mail, Phone, Calendar, MapPin, Edit2, Save, X } from 'lucide-react';
 import {_colorType} from "@/lib/_colors";
+import {USER_MODEL} from "@/model/user.model";
 
 interface PersonalInfoFormProps {
     isEditing: boolean;
     setIsEditing: (value: boolean) => void;
-    formData: {
-        fullName: string;
-        email: string;
-        phone: string;
-        dateOfBirth: string;
-        address: string;
-    };
-    setFormData: React.Dispatch<React.SetStateAction<{
-        fullName: string
-        email: string
-        phone: string
-        dateOfBirth: string
-        address: string
-    }>>
+    formData: USER_MODEL;
+    setFormData: React.Dispatch<React.SetStateAction<USER_MODEL>>
     onSave: () => void;
     colors: _colorType;
 }
@@ -33,13 +22,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
 }) => {
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData((prev:  {
-            fullName: string;
-            email: string;
-            phone: string;
-            dateOfBirth: string;
-            address: string;
-        }) => ({ ...prev, [name]: value }));
+        setFormData((prev: USER_MODEL) => ({ ...prev, [name]: value }));
     };
 
     return (
@@ -118,7 +101,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
                     <input
                         type="text"
                         name="fullName"
-                        value={formData.fullName}
+                        value={formData.name}
                         disabled={!isEditing}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 rounded-xl font-medium transition-all duration-200"
