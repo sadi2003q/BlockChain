@@ -16,7 +16,7 @@ export interface USER_MODEL {
     phone: string,
     dateOfBirth: string,
     address: string,
-    profileImage: null,
+    profileImage: File | null,
     isVerified: boolean
 }
 

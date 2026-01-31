@@ -23,8 +23,8 @@ import {AddressField} from "@/components/signup/AddressField";
 import {ProfileImageUpload} from "@/components/signup/ProfileImageUpload";
 import {NavigationButtons} from "@/components/signup/NavigationButtons";
 import {ForewordLink_SignIn} from "@/components/signup/ForewordLink_SignIn";
-import {ValidationErrors, FocusedField, GenderType} from "@/lib/Schema_Lib/signup.schema";
-import {USER_MODEL_SIGNUP} from "@/model/user.model";
+import {ValidationErrors, FocusedField} from "@/lib/Schema_Lib/signup.schema";
+import {USER_GENDER, USER_MODEL_SIGNUP} from "@/model/user.model";
 import axios from "axios";
 import {useRouter} from "next/navigation";
 import toast from "react-hot-toast";
@@ -37,15 +37,16 @@ export default function VoteSecureSignUp() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [formData, setFormData] = useState<USER_MODEL_SIGNUP>({
+        id: "", isVerified: false,
         name: 'Adnan Abdullah',
         email: 'Adnan@gmail.com',
         phone: '01999477414',
         password: '123456789',
         confirmPassword: '123456789',
         dateOfBirth: new Date().toISOString().split("T")[0],
-        gender: 'male' as GenderType,
+        gender: 'male' as USER_GENDER,
         address: '',
-        profileImage: null as File | null,
+        profileImage: null as File | null
     });
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);

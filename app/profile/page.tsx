@@ -23,7 +23,7 @@
 "use client"
 
 import React, {ChangeEvent, JSX, useEffect, useState} from 'react';
-import {CheckCircle, LogOut, LucideIcon, Settings, User} from 'lucide-react';
+import {CheckCircle, LogOut, Settings, User} from 'lucide-react';
 import {getColor} from '@/lib/_colors';
 import {
     eligibleElections,
@@ -31,7 +31,8 @@ import {
     userData,
     verificationDocuments,
     voterInfo,
-    votingStatistics
+    votingStatistics,
+    MenuItem
 } from '@/lib/Schema_Lib/profile.schema';
 
 // Component Imports
@@ -48,22 +49,6 @@ import {PageHeader} from '@/components/profile/PageHeader';
 import axios from "axios";
 import {USER_GENDER, USER_MODEL} from "@/model/user.model";
 
-/**
- * MenuItem Interface
- * 
- * Defines the structure for menu items displayed in the profile dropdown menu.
- * Each menu item contains an icon, label, and associated action handler.
- * 
- * @interface MenuItem
- * @property {LucideIcon} icon - The Lucid React icon component to display
- * @property {string} label - The display text for the menu item
- * @property {() => void} action - The callback function executed when the menu item is clicked
- */
-interface MenuItem {
-    icon: LucideIcon;
-    label: string;
-    action: () => void;
-}
 
 /**
  * VoteSecureProfile Component
@@ -91,7 +76,9 @@ export default function VoteSecureProfile(): JSX.Element {
     const [activeTab, setActiveTab] = useState<string>('profile');
     
     /** Stores the user's profile image in base64 format or null if not set */
+    const [userID, setUserID] = useState<string>("");
     const [profileImage, setProfileImage] = useState<string | null>(userData.profileImage || null);
+    const [registrationDate, setRegistrationDate] = useState<Date>(new Date())
 
     /**
      * Form state containing editable user profile information
@@ -205,8 +192,9 @@ export default function VoteSecureProfile(): JSX.Element {
                 });
 
 
+                setUserID(res.data._id)
                 setProfileImage(res.data.profileImage ?? null)
-
+                setRegistrationDate(new Date(res.data.createdAt))
 
             } catch (error) {
                 console.log(error);
@@ -307,6 +295,11 @@ export default function VoteSecureProfile(): JSX.Element {
                                  */}
                                 <VotingStatisticsCard
                                     totalVotesParticipated={votingStatistics.totalVotesParticipated}
+                                    isVerified={userFormData.isVerified}
+
+
+
+                                    //FIXME: VOTING STATICS IS NOT IN DATABASE
                                     lastVoted={votingStatistics.lastVoted}
                                     registeredDate={userData.registeredAt}
                                     colors={colors}
@@ -351,8 +344,9 @@ export default function VoteSecureProfile(): JSX.Element {
                                      * Purpose: Shows user's voting eligibility and verification status
                                      */}
                                     <EligibilityStatusCard
-                                        voterId={voterInfo.voterId}
-                                        registrationDate={userData.registeredAt}
+                                        voterId={userID}
+                                        isVerified={userFormData.isVerified}
+                                        registrationDate={registrationDate}
                                         colors={colors}
                                     />
 
@@ -362,6 +356,7 @@ export default function VoteSecureProfile(): JSX.Element {
                                      * Purpose: Shows proof of identity verification for voting
                                      */}
                                     <VerificationDocumentsCard
+                                        isVerified={userFormData.isVerified}
                                         documents={verificationDocuments}
                                         colors={colors}
                                     />
@@ -372,6 +367,7 @@ export default function VoteSecureProfile(): JSX.Element {
                                      * Purpose: Shows upcoming and available voting opportunities
                                      */}
                                     <EligibleElectionsCard
+                                        isVerified={userFormData.isVerified}
                                         elections={eligibleElections}
                                         colors={colors}
                                     />

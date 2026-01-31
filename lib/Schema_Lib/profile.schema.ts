@@ -139,3 +139,20 @@ export const eligibleElections: EligibleElection[] = [
         name: 'Club & Society Elections'
     }
 ];
+
+/**
+ * MenuItem Interface
+ *
+ * Defines the structure for menu items displayed in the profile dropdown menu.
+ * Each menu item contains an icon, label, and associated action handler.
+ *
+ * @interface MenuItem
+ * @property {LucideIcon} icon - The Lucid React icon component to display
+ * @property {string} label - The display text for the menu item
+ * @property {() => void} action - The callback function executed when the menu item is clicked
+ */
+export interface MenuItem {
+    icon: LucideIcon;
+    label: string;
+    action: () => void;
+}

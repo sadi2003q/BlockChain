@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { User, Camera, CheckCircle } from 'lucide-react';
 import {_colorType} from "@/lib/_colors";
-
+import Image from "next/image"
 interface ProfileImageCardProps {
     profileImage: string | null;
     userName: string;
@@ -40,7 +40,7 @@ export const ProfileImageCard: React.FC<ProfileImageCardProps> = ({
                         }}
                     >
                         {profileImage ? (
-                            <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                            <Image src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
                             <User className="w-12 h-12 sm:w-16 sm:h-16" style={{ color: colors.text.tertiary }} />
                         )}
@@ -70,12 +70,17 @@ export const ProfileImageCard: React.FC<ProfileImageCardProps> = ({
                 >
                     {userName}
                 </h2>
-                <p
-                    className="text-sm mb-4"
-                    style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
-                >
-                    Voter ID: {voterId}
-                </p>
+
+                {isVerified && (
+                    <p
+                        className="text-sm mb-4"
+                        style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
+                    >
+                        Voter ID: {voterId}
+                    </p>
+                )}
+
+
 
                 {/* Status Badge */}
                 <div
