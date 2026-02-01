@@ -2,12 +2,13 @@ import React, { ChangeEvent } from 'react';
 import { User, Mail, Phone, Calendar, MapPin, Edit2, Save, X } from 'lucide-react';
 import {_colorType} from "@/lib/_colors";
 import {USER_MODEL} from "@/model/user.model";
+import {UserDTO} from "@/backend/types/user.dto";
 
 interface PersonalInfoFormProps {
     isEditing: boolean;
     setIsEditing: (value: boolean) => void;
-    formData: USER_MODEL;
-    setFormData: React.Dispatch<React.SetStateAction<USER_MODEL>>
+    formData: UserDTO;
+    setFormData: React.Dispatch<React.SetStateAction<UserDTO>>
     onSave: () => void;
     colors: _colorType;
 }
@@ -22,7 +23,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
 }) => {
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData((prev: USER_MODEL) => ({ ...prev, [name]: value }));
+        setFormData((prev: UserDTO) => ({ ...prev, [name]: value }));
     };
 
     return (

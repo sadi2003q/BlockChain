@@ -47,7 +47,10 @@ import {VerificationDocumentsCard} from '@/components/profile/VerificationDocume
 import {EligibleElectionsCard} from '@/components/profile/EligibleElectionsCard';
 import {PageHeader} from '@/components/profile/PageHeader';
 import axios from "axios";
-import {USER_GENDER, USER_MODEL} from "@/model/user.model";
+import {USER_GENDER} from "@/model/user.model";
+import {UserDTO} from "@/backend/types/user.dto";
+import {profile_style} from "@/lib/style/profile";
+
 
 
 /**
@@ -76,22 +79,23 @@ export default function VoteSecureProfile(): JSX.Element {
     const [activeTab, setActiveTab] = useState<string>('profile');
     
     /** Stores the user's profile image in base64 format or null if not set */
-    const [userID, setUserID] = useState<string>("");
-    const [profileImage, setProfileImage] = useState<string | null>(userData.profileImage || null);
-    const [registrationDate, setRegistrationDate] = useState<Date>(new Date())
+    const [profileImagePreview, setProfileImagePreview] = useState<string | File | null>(null);
 
     /**
      * Form state containing editable user profile information
      * Used in the Profile Information tab for user data updates
      */
-    const [userFormData, setUserFormData] = useState<USER_MODEL>({
+    const [userFormData, setUserFormData] = useState<UserDTO>({
+        age: 0,
+        createdAt: new Date(),
+        verificationStatus: "pending",
         id: "",
         name: userData.name,
         email: userData.email,
         phone: userData.phone,
         dateOfBirth: userData.dateOfBirth.toISOString().split('T')[0],
         address: userData.address,
-        profileImage: null,
+        profileImage: "",
         gender: USER_GENDER.Female,
         isVerified: userData.isVerified
     });
@@ -117,7 +121,11 @@ export default function VoteSecureProfile(): JSX.Element {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setProfileImage(reader.result as string);
+                setProfileImagePreview(reader.result as string);
+                setUserFormData(prev => ({
+                    ...prev,
+                    profileImage: file
+                }));
             };
             reader.readAsDataURL(file);
         }
@@ -171,30 +179,13 @@ export default function VoteSecureProfile(): JSX.Element {
     useEffect(() => {
         const FetchData = async () => {
             try {
-                const res = await axios.get("/api/user/profile/personalInfo", {
-                    withCredentials: true
-                });
+                const res = await axios.get<UserDTO>(
+                    "/api/user/profile/personalInfo",
+                    { withCredentials: true }
+                );
 
-                console.log('data found : ', res.data);
-
-                setUserFormData({
-                    id: res.data._id,
-                    gender: res.data.gender,
-                    name: res.data.name,
-                    email: res.data.email,
-                    phone: res.data.phone,
-                    dateOfBirth: new Date(res.data.dateOfBirth)
-                        .toISOString()
-                        .split("T")[0],
-                    address: res.data.address,
-                    profileImage: res.data.profileImage ?? null,
-                    isVerified: res.data.isVerified
-                });
-
-
-                setUserID(res.data._id)
-                setProfileImage(res.data.profileImage ?? null)
-                setRegistrationDate(new Date(res.data.createdAt))
+                setUserFormData(res.data);
+                setProfileImagePreview(res.data.profileImage);
 
             } catch (error) {
                 console.log(error);
@@ -280,7 +271,7 @@ export default function VoteSecureProfile(): JSX.Element {
                                  * Functionality: Image upload capability with preview
                                  */}
                                 <ProfileImageCard
-                                    profileImage={profileImage}
+                                    profileImage={profileImagePreview}
                                     userName={userFormData.name}
                                     voterId={voterInfo.voterId}
                                     isVerified={userFormData.isVerified}
@@ -344,9 +335,9 @@ export default function VoteSecureProfile(): JSX.Element {
                                      * Purpose: Shows user's voting eligibility and verification status
                                      */}
                                     <EligibilityStatusCard
-                                        voterId={userID}
+                                        voterId={userFormData.id}
                                         isVerified={userFormData.isVerified}
-                                        registrationDate={registrationDate}
+                                        registrationDate={userFormData.createdAt}
                                         colors={colors}
                                     />
 
@@ -386,93 +377,7 @@ export default function VoteSecureProfile(): JSX.Element {
              * - Animation class utilities for component transitions
              * - Global input and scroll behavior styling
              */}
-            <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-                
-                /* ==================== FADE ANIMATIONS ==================== */
-                
-                /* Fade In animation with downward slide effect */
-                /* Used for elements that should appear from the top */
-                @keyframes fadeInDown {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                
-                /* Fade In animation with upward slide effect */
-                /* Used for elements that should appear from the bottom */
-                @keyframes fadeInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                
-                /* Simple fade in animation */
-                /* Used for opacity-only transitions */
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                    }
-                    to {
-                        opacity: 1;
-                    }
-                }
-                
-                /* Grid background animation effect */
-                /* Creates a moving grid pattern in the background */
-                @keyframes gridMoveFast {
-                    0% {
-                        transform: translate(0, 0);
-                    }
-                    100% {
-                        transform: translate(48px, 48px);
-                    }
-                }
-                
-                /* ==================== ANIMATION CLASS UTILITIES ==================== */
-                
-                /* Applies fadeInDown animation to elements */
-                .animate-fadeInDown {
-                    animation: fadeInDown 0.5s ease-out forwards;
-                }
-                
-                /* Applies fadeInUp animation to elements */
-                .animate-fadeInUp {
-                    animation: fadeInUp 0.5s ease-out forwards;
-                }
-                
-                /* Applies fadeIn animation to elements */
-                .animate-fadeIn {
-                    animation: fadeIn 0.2s ease-out forwards;
-                }
-                
-                /* ==================== GLOBAL BEHAVIORS ==================== */
-                
-                /* Enable smooth scrolling across the entire page */
-                * {
-                    scroll-behavior: smooth;
-                }
-                
-                /* Input placeholder styling - shows at normal opacity */
-                input::placeholder {
-                    opacity: 0.5;
-                }
-                
-                /* Input placeholder styling - dims when input is focused */
-                input:focus::placeholder {
-                    opacity: 0.3;
-                }
-            `}</style>
+            <style>{profile_style}</style>
         </div>
     );
 }

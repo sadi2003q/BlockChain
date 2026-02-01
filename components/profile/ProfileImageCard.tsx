@@ -1,9 +1,10 @@
 import React, { ChangeEvent } from 'react';
 import { User, Camera, CheckCircle } from 'lucide-react';
 import {_colorType} from "@/lib/_colors";
-import Image from "next/image"
+
+
 interface ProfileImageCardProps {
-    profileImage: string | null;
+    profileImage: string | File | null;
     userName: string;
     voterId: string;
     isVerified: boolean;
@@ -40,7 +41,7 @@ export const ProfileImageCard: React.FC<ProfileImageCardProps> = ({
                         }}
                     >
                         {profileImage ? (
-                            <Image src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                            <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
                             <User className="w-12 h-12 sm:w-16 sm:h-16" style={{ color: colors.text.tertiary }} />
                         )}

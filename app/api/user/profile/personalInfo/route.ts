@@ -3,6 +3,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {connect} from "@/lib/dbConfig";
 import { User } from '@/schema/user.schema'
 import jwt from "jsonwebtoken";
+import {toUserDTO} from "@/backend/utils/userMapper";
 
 await connect();
 export const GET = async (req: NextRequest) => {
@@ -24,7 +25,8 @@ export const GET = async (req: NextRequest) => {
             .select("-passwordHash");
 
 
-        return NextResponse.json(user);
+
+        return NextResponse.json(toUserDTO(user));
 
 
     } catch (error) {
