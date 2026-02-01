@@ -68,9 +68,7 @@ export default function VoteSecureProfile(): JSX.Element {
     
     /** Tracks whether the application is in dark mode or light mode */
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
-    
-    /** Tracks whether the user is currently editing their profile information */
-    const [isEditing, setIsEditing] = useState<boolean>(false);
+
     
     /** Tracks the visibility state of the profile dropdown menu */
     const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
@@ -131,18 +129,6 @@ export default function VoteSecureProfile(): JSX.Element {
         }
     };
 
-    /**
-     * Handles saving user profile changes
-     * 
-     * Called when the user clicks the save button after editing their profile.
-     * Currently, exits editing mode; in production, this would send data to a backend API.
-     * 
-     * @returns {void}
-     */
-    const handleSave = (): void => {
-        setIsEditing(false);
-        // Save logic here
-    };
 
     /**
      * Profile dropdown menu items configuration
@@ -313,11 +299,7 @@ export default function VoteSecureProfile(): JSX.Element {
                              */}
                             {activeTab === 'profile' && (
                                 <PersonalInfoForm
-                                    isEditing={isEditing}
-                                    setIsEditing={setIsEditing}
-                                    formData={userFormData}
-                                    setFormData={setUserFormData}
-                                    onSave={handleSave}
+                                    userData={userFormData}
                                     colors={colors}
                                 />
                             )}

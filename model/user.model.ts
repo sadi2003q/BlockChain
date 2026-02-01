@@ -8,8 +8,7 @@ export enum USER_GENDER {
 
 
 
-export interface USER_MODEL {
-    id: string
+export interface USER_MODEL_SIGNUP {
     name: string
     gender: USER_GENDER
     email: string,
@@ -18,12 +17,6 @@ export interface USER_MODEL {
     address: string,
     profileImage: File | null,
     isVerified: boolean
-}
-
-
-
-
-export interface USER_MODEL_SIGNUP extends USER_MODEL{
     password: string
     confirmPassword: string
 }
