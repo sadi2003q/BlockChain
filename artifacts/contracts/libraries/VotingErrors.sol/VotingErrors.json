@@ -1,0 +1,535 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "VotingErrors",
+  "sourceName": "contracts/libraries/VotingErrors.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "adminId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Admin__AlreadyExists",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__Admin__CannotRemoveLastSuperAdmin",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__Admin__CannotRemoveSelf",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__Admin__NotActive",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "adminId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Admin__NotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "wallet",
+          "type": "address"
+        }
+      ],
+      "name": "VoteSecure__Admin__WalletAlreadyRegistered",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "wallet",
+          "type": "address"
+        }
+      ],
+      "name": "VoteSecure__Admin__WalletNotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__Auth__AdminNotActive",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "required",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "VoteSecure__Auth__MissingPermission",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__Auth__NotOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__Auth__Unauthorized",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "candidateId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Candidate__AlreadyInElection",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "candidateId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Candidate__AlreadyRegistered",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "candidateId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Candidate__Disqualified",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "candidateId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint8",
+          "name": "current",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "attempted",
+          "type": "uint8"
+        }
+      ],
+      "name": "VoteSecure__Candidate__InvalidStatusTransition",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "candidateId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Candidate__NotApproved",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "candidateId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Candidate__NotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Election__AlreadyExists",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint8",
+          "name": "expected",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "actual",
+          "type": "uint8"
+        }
+      ],
+      "name": "VoteSecure__Election__InvalidStatus",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Election__InvalidTimeline",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Election__NotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Election__RegistrationClosed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Election__RegistrationNotOpen",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Election__ResultsAlreadyPublished",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "votingEnd",
+          "type": "uint256"
+        }
+      ],
+      "name": "VoteSecure__Election__VotingEnded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Election__VotingNotCompleted",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "votingStart",
+          "type": "uint256"
+        }
+      ],
+      "name": "VoteSecure__Election__VotingNotStarted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__General__AlreadyDone",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__General__ContractNotPaused",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__General__ContractPaused",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__General__EmptyArray",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__General__EmptyString",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__General__ReentrancyDetected",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__General__ZeroAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__General__ZeroValue",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Result__AlreadyPublished",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Result__CalculationFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Result__NotPublished",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "userId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Vote__AlreadyVoted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__Vote__CannotChange",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VoteSecure__Vote__HashMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Vote__Invalid",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "candidateId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "electionId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Vote__InvalidCandidate",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "userId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Voter__AlreadyRegistered",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "userId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Voter__AlreadyVerified",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "current",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "attempted",
+          "type": "uint8"
+        }
+      ],
+      "name": "VoteSecure__Voter__InvalidStatusTransition",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "userId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Voter__NotEligible",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "userId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Voter__NotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "userId",
+          "type": "string"
+        }
+      ],
+      "name": "VoteSecure__Voter__NotVerified",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "wallet",
+          "type": "address"
+        }
+      ],
+      "name": "VoteSecure__Voter__WalletAlreadyRegistered",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212202da6c4c214c3a2d188d577b6f875ecf6efaaddba5f91a68e636b99e1cc1bf5fd64736f6c634300081c0033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212202da6c4c214c3a2d188d577b6f875ecf6efaaddba5f91a68e636b99e1cc1bf5fd64736f6c634300081c0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

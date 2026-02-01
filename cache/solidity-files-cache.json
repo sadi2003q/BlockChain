@@ -8,11 +8,11 @@
       "solcConfig": {
         "version": "0.8.28",
         "settings": {
-          "evmVersion": "paris",
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -37,6 +37,234 @@
         "Adder"
       ]
     },
+    "D:\\My Stealth version\\BlockChain\\contracts\\core\\AccessControl.sol": {
+      "lastModificationDate": 1769884881598,
+      "contentHash": "82502bc6e94e29c5736a34a9bba6b251",
+      "sourceName": "contracts/core/AccessControl.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../libraries/VotingTypes.sol",
+        "../libraries/VotingErrors.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.28"
+      ],
+      "artifacts": [
+        "AccessControl"
+      ]
+    },
+    "D:\\My Stealth version\\BlockChain\\contracts\\libraries\\VotingTypes.sol": {
+      "lastModificationDate": 1769885286075,
+      "contentHash": "2a70a9493bf7be09b998603876c4f6e2",
+      "sourceName": "contracts/libraries/VotingTypes.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.28"
+      ],
+      "artifacts": [
+        "VotingTypes"
+      ]
+    },
+    "D:\\My Stealth version\\BlockChain\\contracts\\libraries\\VotingErrors.sol": {
+      "lastModificationDate": 1769885457953,
+      "contentHash": "e7d9bf232564b04c0d24b377c0d75561",
+      "sourceName": "contracts/libraries/VotingErrors.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.28"
+      ],
+      "artifacts": [
+        "VotingErrors"
+      ]
+    },
+    "D:\\My Stealth version\\BlockChain\\contracts\\core\\AdminRegistry.sol": {
+      "lastModificationDate": 1769884883266,
+      "contentHash": "c1cdfcff2517b0a2fcb3db89d5fe4f81",
+      "sourceName": "contracts/core/AdminRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./AccessControl.sol",
+        "../interfaces/IAdminRegistry.sol",
+        "../libraries/VotingTypes.sol",
+        "../libraries/VotingErrors.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.28"
+      ],
+      "artifacts": [
+        "AdminRegistry"
+      ]
+    },
+    "D:\\My Stealth version\\BlockChain\\contracts\\interfaces\\IAdminRegistry.sol": {
+      "lastModificationDate": 1769881091532,
+      "contentHash": "70178ca6397f95aa9eed9a812eaf6dc6",
+      "sourceName": "contracts/interfaces/IAdminRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../libraries/VotingTypes.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.28"
+      ],
+      "artifacts": [
+        "IAdminRegistry"
+      ]
+    },
+    "D:\\My Stealth version\\BlockChain\\contracts\\interfaces\\IVoteSecure.sol": {
+      "lastModificationDate": 1769885490688,
+      "contentHash": "101bbedfd6bf8ef24f4d57d1612d26ad",
+      "sourceName": "contracts/interfaces/IVoteSecure.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../libraries/VotingTypes.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.28"
+      ],
+      "artifacts": [
+        "IVoteSecure"
+      ]
+    },
     "D:\\My Stealth version\\BlockChain\\contracts\\Lock.sol": {
       "lastModificationDate": 1769489870108,
       "contentHash": "b1b955aca5ced8c81be2657a192b4585",
@@ -44,11 +272,11 @@
       "solcConfig": {
         "version": "0.8.28",
         "settings": {
-          "evmVersion": "paris",
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -71,42 +299,6 @@
       ],
       "artifacts": [
         "Lock"
-      ]
-    },
-    "D:\\My Stealth version\\BlockChain\\contracts\\Voting.sol": {
-      "lastModificationDate": 1769490404749,
-      "contentHash": "42902d3caf197909c2ad3afc7e46b5f9",
-      "sourceName": "contracts/Voting.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "evmVersion": "paris",
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.19"
-      ],
-      "artifacts": [
-        "Voting"
       ]
     }
   }
