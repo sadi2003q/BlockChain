@@ -1,239 +1,259 @@
-import React, { ChangeEvent } from 'react';
-import { User, Mail, Phone, Calendar, MapPin, Edit2, Save, X } from 'lucide-react';
-import {_colorType} from "@/lib/_colors";
+import React from 'react';
+import { User, Mail, Phone, Calendar, MapPin } from 'lucide-react';
+import { _colorType } from "@/lib/_colors";
+import { UserDTO } from "@/backend/types/user.dto";
 
-interface PersonalInfoFormProps {
-    isEditing: boolean;
-    setIsEditing: (value: boolean) => void;
-    formData: {
-        fullName: string;
-        email: string;
-        phone: string;
-        dateOfBirth: string;
-        address: string;
-    };
-    setFormData: React.Dispatch<React.SetStateAction<{
-        fullName: string
-        email: string
-        phone: string
-        dateOfBirth: string
-        address: string
-    }>>
-    onSave: () => void;
+interface PersonalInfoViewProps {
+    userData: UserDTO;
     colors: _colorType;
 }
 
-export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
-    isEditing,
-    setIsEditing,
-    formData,
-    setFormData,
-    onSave,
-    colors
-}) => {
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev:  {
-            fullName: string;
-            email: string;
-            phone: string;
-            dateOfBirth: string;
-            address: string;
-        }) => ({ ...prev, [name]: value }));
+export const PersonalInfoForm: React.FC<PersonalInfoViewProps> = ({
+                                                                      userData,
+                                                                      colors
+                                                                  }) => {
+    const formatDate = (dateString: string) => {
+        if (!dateString) return 'Not provided';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     };
 
+    const calculateAge = (dateString: string) => {
+        if (!dateString) return null;
+        const birthDate = new Date(dateString);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
+    const age = userData.dateOfBirth ? calculateAge(userData.dateOfBirth) : null;
+
     return (
-        <div
-            className="p-4 sm:p-8 rounded-2xl"
-            style={{
-                backgroundColor: colors.bg.card,
-                border: `1px solid ${colors.border.subtle}`
-            }}
-        >
-            <div className="flex items-center justify-between mb-6 sm:mb-8">
-                <h2
-                    className="text-xl sm:text-2xl font-bold"
-                    style={{ fontFamily: "'Sora', sans-serif", color: colors.text.primary }}
+        <div className="space-y-6">
+            {/* Main Info Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {/* Full Name Card */}
+                <div
+                    className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:shadow-lg"
+                    style={{
+                        backgroundColor: colors.bg.card,
+                        border: `1px solid ${colors.border.subtle}`,
+                    }}
                 >
-                    Personal Information
-                </h2>
-                
-                {!isEditing ? (
-                    <button
-                        onClick={() => setIsEditing(true)}
-                        className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl font-medium text-xs sm:text-sm transition-all duration-300 hover:scale-105"
-                        style={{
-                            backgroundColor: colors.accent.primary,
-                            color: '#ffffff',
-                            fontFamily: "'Inter', sans-serif",
-                            boxShadow: `0 4px 12px ${colors.glow.primary}`
-                        }}
-                    >
-                        <Edit2 className="w-4 h-4" />
-                        <span className="hidden sm:inline">Edit Profile</span>
-                        <span className="sm:hidden">Edit</span>
-                    </button>
-                ) : (
-                    <div className="flex gap-2">
-                        <button
-                            onClick={onSave}
-                            className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl font-medium text-xs sm:text-sm transition-all duration-300 hover:scale-105"
+                    <div className="relative flex items-center gap-4">
+                        <div
+                            className="w-14 h-14 rounded-xl flex items-center justify-center"
                             style={{
-                                backgroundColor: colors.accent.success,
-                                color: '#ffffff',
-                                fontFamily: "'Inter', sans-serif"
+                                border: `2px solid ${colors.accent.primary}`,
+                                backgroundColor: colors.bg.secondary
                             }}
                         >
-                            <Save className="w-4 h-4" />
-                            <span className="hidden sm:inline">Save</span>
-                        </button>
-                        <button
-                            onClick={() => setIsEditing(false)}
-                            className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl font-medium text-xs sm:text-sm transition-all duration-300"
-                            style={{
-                                backgroundColor: colors.bg.tertiary,
-                                color: colors.text.secondary,
-                                border: `1px solid ${colors.border.medium}`,
-                                fontFamily: "'Inter', sans-serif"
-                            }}
-                        >
-                            <X className="w-4 h-4" />
-                            <span className="hidden sm:inline">Cancel</span>
-                        </button>
+                            <User className="w-6 h-6" style={{ color: colors.accent.primary }} />
+                        </div>
+                        <div className="flex-1">
+                            <p
+                                className="text-sm font-medium mb-1"
+                                style={{
+                                    color: colors.text.secondary,
+                                    fontFamily: "'Sora', sans-serif"
+                                }}
+                            >
+                                Full Name
+                            </p>
+                            <p
+                                className="text-xl font-bold"
+                                style={{
+                                    color: colors.text.primary,
+                                    fontFamily: "'Sora', sans-serif"
+                                }}
+                            >
+                                {userData.name || 'Not provided'}
+                            </p>
+                        </div>
                     </div>
-                )}
+                </div>
+
+                {/* Email Card */}
+                <div
+                    className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:shadow-lg"
+                    style={{
+                        backgroundColor: colors.bg.card,
+                        border: `1px solid ${colors.border.subtle}`,
+                    }}
+                >
+                    <div className="relative flex items-center gap-4">
+                        <div
+                            className="w-14 h-14 rounded-xl flex items-center justify-center"
+                            style={{
+                                border: `2px solid ${colors.accent.primary}`,
+                                backgroundColor: colors.bg.secondary
+                            }}
+                        >
+                            <Mail className="w-6 h-6" style={{ color: colors.accent.primary }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p
+                                className="text-sm font-medium mb-1"
+                                style={{
+                                    color: colors.text.secondary,
+                                    fontFamily: "'Sora', sans-serif"
+                                }}
+                            >
+                                Email Address
+                            </p>
+                            <p
+                                className="text-lg font-bold truncate"
+                                style={{
+                                    color: colors.text.primary,
+                                    fontFamily: "'Sora', sans-serif"
+                                }}
+                            >
+                                {userData.email || 'Not provided'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Phone Card */}
+                <div
+                    className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:shadow-lg"
+                    style={{
+                        backgroundColor: colors.bg.card,
+                        border: `1px solid ${colors.border.subtle}`,
+                    }}
+                >
+                    <div className="relative flex items-center gap-4">
+                        <div
+                            className="w-14 h-14 rounded-xl flex items-center justify-center"
+                            style={{
+                                border: `2px solid ${colors.accent.primary}`,
+                                backgroundColor: colors.bg.secondary
+                            }}
+                        >
+                            <Phone className="w-6 h-6" style={{ color: colors.accent.primary }} />
+                        </div>
+                        <div className="flex-1">
+                            <p
+                                className="text-sm font-medium mb-1"
+                                style={{
+                                    color: colors.text.secondary,
+                                    fontFamily: "'Sora', sans-serif"
+                                }}
+                            >
+                                Phone Number
+                            </p>
+                            <p
+                                className="text-xl font-bold"
+                                style={{
+                                    color: colors.text.primary,
+                                    fontFamily: "'Sora', sans-serif"
+                                }}
+                            >
+                                {userData.phone || 'Not provided'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Date of Birth Card */}
+                <div
+                    className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:shadow-lg"
+                    style={{
+                        backgroundColor: colors.bg.card,
+                        border: `1px solid ${colors.border.subtle}`,
+                    }}
+                >
+                    <div className="relative flex items-center gap-4">
+                        <div
+                            className="w-14 h-14 rounded-xl flex items-center justify-center"
+                            style={{
+                                border: `2px solid ${colors.accent.primary}`,
+                                backgroundColor: colors.bg.secondary
+                            }}
+                        >
+                            <Calendar className="w-6 h-6" style={{ color: colors.accent.primary }} />
+                        </div>
+                        <div className="flex-1">
+                            <p
+                                className="text-sm font-medium mb-1"
+                                style={{
+                                    color: colors.text.secondary,
+                                    fontFamily: "'Sora', sans-serif"
+                                }}
+                            >
+                                Date of Birth
+                            </p>
+                            <p
+                                className="text-lg font-bold"
+                                style={{
+                                    color: colors.text.primary,
+                                    fontFamily: "'Sora', sans-serif"
+                                }}
+                            >
+                                {userData.dateOfBirth ? formatDate(userData.dateOfBirth) : 'Not provided'}
+                            </p>
+                            {/*{age && (*/}
+                            {/*    <p*/}
+                            {/*        className="text-sm mt-1 font-medium"*/}
+                            {/*        style={{*/}
+                            {/*            color: colors.accent.primary,*/}
+                            {/*            fontFamily: "'Inter', sans-serif"*/}
+                            {/*        }}*/}
+                            {/*    >*/}
+                            {/*        {age} years old*/}
+                            {/*    </p>*/}
+                            {/*)}*/}
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {/* Vertical Layout for all fields */}
-            <div className="space-y-4 sm:space-y-5">
-                {/* Full Name */}
-                <div>
-                    <label
-                        className="block text-sm font-semibold mb-2"
-                        style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
-                    >
-                        <User className="w-4 h-4 inline mr-2" />
-                        Full Name
-                    </label>
-                    <input
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        disabled={!isEditing}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl font-medium transition-all duration-200"
+            {/* Address Card - Full Width */}
+            <div
+                className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:shadow-lg"
+                style={{
+                    backgroundColor: colors.bg.card,
+                    border: `1px solid ${colors.border.subtle}`,
+                }}
+            >
+                <div className="relative flex items-start gap-4">
+                    <div
+                        className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{
-                            backgroundColor: colors.bg.tertiary,
-                            border: `1px solid ${colors.border.subtle}`,
-                            color: colors.text.primary,
-                            fontFamily: "'Inter', sans-serif",
-                            outline: 'none'
+                            border: `2px solid ${colors.accent.primary}`,
+                            backgroundColor: colors.bg.secondary
                         }}
-                    />
-                </div>
-
-                {/* Email */}
-                <div>
-                    <label
-                        className="block text-sm font-semibold mb-2"
-                        style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
                     >
-                        <Mail className="w-4 h-4 inline mr-2" />
-                        Email Address
-                    </label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        disabled={!isEditing}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl font-medium transition-all duration-200"
-                        style={{
-                            backgroundColor: colors.bg.tertiary,
-                            border: `1px solid ${colors.border.subtle}`,
-                            color: colors.text.primary,
-                            fontFamily: "'Inter', sans-serif",
-                            outline: 'none'
-                        }}
-                    />
-                </div>
-
-                {/* Phone */}
-                <div>
-                    <label
-                        className="block text-sm font-semibold mb-2"
-                        style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
-                    >
-                        <Phone className="w-4 h-4 inline mr-2" />
-                        Phone Number
-                    </label>
-                    <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        disabled={!isEditing}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl font-medium transition-all duration-200"
-                        style={{
-                            backgroundColor: colors.bg.tertiary,
-                            border: `1px solid ${colors.border.subtle}`,
-                            color: colors.text.primary,
-                            fontFamily: "'Inter', sans-serif",
-                            outline: 'none'
-                        }}
-                    />
-                </div>
-
-                {/* Date of Birth */}
-                <div>
-                    <label
-                        className="block text-sm font-semibold mb-2"
-                        style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
-                    >
-                        <Calendar className="w-4 h-4 inline mr-2" />
-                        Date of Birth
-                    </label>
-                    <input
-                        type="date"
-                        name="dateOfBirth"
-                        value={formData.dateOfBirth}
-                        disabled={!isEditing}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl font-medium transition-all duration-200"
-                        style={{
-                            backgroundColor: colors.bg.tertiary,
-                            border: `1px solid ${colors.border.subtle}`,
-                            color: colors.text.primary,
-                            fontFamily: "'Inter', sans-serif",
-                            outline: 'none'
-                        }}
-                    />
-                </div>
-
-                {/* Address */}
-                <div>
-                    <label
-                        className="block text-sm font-semibold mb-2"
-                        style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
-                    >
-                        <MapPin className="w-4 h-4 inline mr-2" />
-                        Address
-                    </label>
-                    <input
-                        type="text"
-                        name="address"
-                        value={formData.address}
-                        disabled={!isEditing}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl font-medium transition-all duration-200"
-                        style={{
-                            backgroundColor: colors.bg.tertiary,
-                            border: `1px solid ${colors.border.subtle}`,
-                            color: colors.text.primary,
-                            fontFamily: "'Inter', sans-serif",
-                            outline: 'none'
-                        }}
-                    />
+                        <MapPin className="w-6 h-6" style={{ color: colors.accent.primary }} />
+                    </div>
+                    <div className="flex-1">
+                        <p
+                            className="text-sm font-medium mb-1"
+                            style={{
+                                color: colors.text.secondary,
+                                fontFamily: "'Sora', sans-serif"
+                            }}
+                        >
+                            Address
+                        </p>
+                        <p
+                            className="text-xl font-bold leading-relaxed"
+                            style={{
+                                color: colors.text.primary,
+                                fontFamily: "'Sora', sans-serif"
+                            }}
+                        >
+                            {userData.address || 'Not provided'}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

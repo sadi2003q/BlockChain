@@ -62,7 +62,7 @@ export default function VotingPortal() {
         seconds: 45
     });
 
-    // Mock user data - In production, fetch from blockchain/backend
+    // Mock user data - In production, profile from blockchain/backend
     const userData: UserData = {
         name: "John Doe",
         id: "VS-2026-8472",
@@ -70,7 +70,7 @@ export default function VotingPortal() {
         district: "District 5"
     };
 
-    // Mock election data - In production, fetch from smart contract
+    // Mock election data - In production, profile from smart contract
     const electionInfo: ElectionInfo = {
         title: "Student Council President 2026",
         description: "Annual election for Student Council President. Your vote matters in shaping the future of our institution.",
@@ -80,7 +80,7 @@ export default function VotingPortal() {
         votedCount: 1923
     };
 
-    // Mock candidates - In production, fetch from smart contract
+    // Mock candidates - In production, profile from smart contract
     const candidates: Candidate[] = [
         {
             id: 1,

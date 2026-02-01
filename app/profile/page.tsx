@@ -22,46 +22,36 @@
 
 "use client"
 
-import React, {useState, ChangeEvent, JSX} from 'react';
-import {User, Settings, LogOut, CheckCircle, LucideIcon} from 'lucide-react';
-import { getColor } from '@/lib/_colors';
-import { 
+import React, {ChangeEvent, JSX, useEffect, useState} from 'react';
+import {CheckCircle, LogOut, Settings, User} from 'lucide-react';
+import {getColor} from '@/lib/_colors';
+import {
+    eligibleElections,
+    TabItem,
     userData,
+    verificationDocuments,
     voterInfo,
     votingStatistics,
-    verificationDocuments,
-    eligibleElections,
-    TabItem
+    MenuItem
 } from '@/lib/Schema_Lib/profile.schema';
 
 // Component Imports
-import { ProfileHeader } from '@/components/profile/ProfileHeader';
-import { AnimatedBackground } from '@/components/profile/AnimatedBackground';
-import { ProfileImageCard } from '@/components/profile/ProfileImageCard';
-import { VotingStatisticsCard } from '@/components/profile/VotingStatisticsCard';
-import { ProfileTabs } from '@/components/profile/ProfileTabs';
-import { PersonalInfoForm } from '@/components/profile/PersonalInfoForm';
-import { EligibilityStatusCard } from '@/components/profile/EligibilityStatusCard';
-import { VerificationDocumentsCard } from '@/components/profile/VerificationDocumentsCard';
-import { EligibleElectionsCard } from '@/components/profile/EligibleElectionsCard';
-import { PageHeader } from '@/components/profile/PageHeader';
+import {ProfileHeader} from '@/components/profile/ProfileHeader';
+import {AnimatedBackground} from '@/components/profile/AnimatedBackground';
+import {ProfileImageCard} from '@/components/profile/ProfileImageCard';
+import {VotingStatisticsCard} from '@/components/profile/VotingStatisticsCard';
+import {ProfileTabs} from '@/components/profile/ProfileTabs';
+import {PersonalInfoForm} from '@/components/profile/PersonalInfoForm';
+import {EligibilityStatusCard} from '@/components/profile/EligibilityStatusCard';
+import {VerificationDocumentsCard} from '@/components/profile/VerificationDocumentsCard';
+import {EligibleElectionsCard} from '@/components/profile/EligibleElectionsCard';
+import {PageHeader} from '@/components/profile/PageHeader';
+import axios from "axios";
+import {USER_GENDER} from "@/model/user.model";
+import {UserDTO} from "@/backend/types/user.dto";
+import {profile_style} from "@/lib/style/profile";
 
-/**
- * MenuItem Interface
- * 
- * Defines the structure for menu items displayed in the profile dropdown menu.
- * Each menu item contains an icon, label, and associated action handler.
- * 
- * @interface MenuItem
- * @property {LucideIcon} icon - The Lucid React icon component to display
- * @property {string} label - The display text for the menu item
- * @property {() => void} action - The callback function executed when the menu item is clicked
- */
-interface MenuItem {
-    icon: LucideIcon;
-    label: string;
-    action: () => void;
-}
+
 
 /**
  * VoteSecureProfile Component
@@ -78,9 +68,7 @@ export default function VoteSecureProfile(): JSX.Element {
     
     /** Tracks whether the application is in dark mode or light mode */
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
-    
-    /** Tracks whether the user is currently editing their profile information */
-    const [isEditing, setIsEditing] = useState<boolean>(false);
+
     
     /** Tracks the visibility state of the profile dropdown menu */
     const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
@@ -89,18 +77,25 @@ export default function VoteSecureProfile(): JSX.Element {
     const [activeTab, setActiveTab] = useState<string>('profile');
     
     /** Stores the user's profile image in base64 format or null if not set */
-    const [profileImage, setProfileImage] = useState<string | null>(userData.profileImage || null);
+    const [profileImagePreview, setProfileImagePreview] = useState<string | File | null>(null);
 
     /**
      * Form state containing editable user profile information
      * Used in the Profile Information tab for user data updates
      */
-    const [userFormData, setUserFormData] = useState({
-        fullName: userData.name,
+    const [userFormData, setUserFormData] = useState<UserDTO>({
+        age: 0,
+        createdAt: new Date(),
+        verificationStatus: "pending",
+        id: "",
+        name: userData.name,
         email: userData.email,
         phone: userData.phone,
         dateOfBirth: userData.dateOfBirth.toISOString().split('T')[0],
-        address: userData.address
+        address: userData.address,
+        profileImage: "",
+        gender: USER_GENDER.Female,
+        isVerified: userData.isVerified
     });
 
     /**
@@ -124,24 +119,16 @@ export default function VoteSecureProfile(): JSX.Element {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setProfileImage(reader.result as string);
+                setProfileImagePreview(reader.result as string);
+                setUserFormData(prev => ({
+                    ...prev,
+                    profileImage: file
+                }));
             };
             reader.readAsDataURL(file);
         }
     };
 
-    /**
-     * Handles saving user profile changes
-     * 
-     * Called when the user clicks the save button after editing their profile.
-     * Currently, exits editing mode; in production, this would send data to a backend API.
-     * 
-     * @returns {void}
-     */
-    const handleSave = (): void => {
-        setIsEditing(false);
-        // Save logic here
-    };
 
     /**
      * Profile dropdown menu items configuration
@@ -168,6 +155,35 @@ export default function VoteSecureProfile(): JSX.Element {
         { id: 'eligibility', label: 'Voting Eligibility', icon: CheckCircle }
     ];
 
+
+
+
+
+
+
+    // ==================== FUNCTIONS ====================
+    useEffect(() => {
+        const FetchData = async () => {
+            try {
+                const res = await axios.get<UserDTO>(
+                    "/api/user/profile/personalInfo",
+                    { withCredentials: true }
+                );
+
+                setUserFormData(res.data);
+                setProfileImagePreview(res.data.profileImage);
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        FetchData().then();
+    }, []);
+
+
+
+
     return (
         <div
             className="min-h-screen transition-colors duration-500 relative overflow-hidden"
@@ -191,8 +207,8 @@ export default function VoteSecureProfile(): JSX.Element {
                 notificationCount={3}
                 showProfileMenu={showProfileMenu}
                 setShowProfileMenu={setShowProfileMenu}
-                userName={userData.name}
-                userEmail={userData.email}
+                userName={userFormData.name}
+                userEmail={userFormData.email}
                 menuItems={menuItems}
                 colors={colors}
             />
@@ -241,10 +257,10 @@ export default function VoteSecureProfile(): JSX.Element {
                                  * Functionality: Image upload capability with preview
                                  */}
                                 <ProfileImageCard
-                                    profileImage={profileImage}
-                                    userName={userData.name}
+                                    profileImage={profileImagePreview}
+                                    userName={userFormData.name}
                                     voterId={voterInfo.voterId}
-                                    isVerified={userData.isVerified}
+                                    isVerified={userFormData.isVerified}
                                     onImageUpload={handleImageUpload}
                                     colors={colors}
                                 />
@@ -256,6 +272,11 @@ export default function VoteSecureProfile(): JSX.Element {
                                  */}
                                 <VotingStatisticsCard
                                     totalVotesParticipated={votingStatistics.totalVotesParticipated}
+                                    isVerified={userFormData.isVerified}
+
+
+
+                                    //FIXME: VOTING STATICS IS NOT IN DATABASE
                                     lastVoted={votingStatistics.lastVoted}
                                     registeredDate={userData.registeredAt}
                                     colors={colors}
@@ -278,11 +299,7 @@ export default function VoteSecureProfile(): JSX.Element {
                              */}
                             {activeTab === 'profile' && (
                                 <PersonalInfoForm
-                                    isEditing={isEditing}
-                                    setIsEditing={setIsEditing}
-                                    formData={userFormData}
-                                    setFormData={setUserFormData}
-                                    onSave={handleSave}
+                                    userData={userFormData}
                                     colors={colors}
                                 />
                             )}
@@ -300,8 +317,9 @@ export default function VoteSecureProfile(): JSX.Element {
                                      * Purpose: Shows user's voting eligibility and verification status
                                      */}
                                     <EligibilityStatusCard
-                                        voterId={voterInfo.voterId}
-                                        registrationDate={userData.registeredAt}
+                                        voterId={userFormData.id}
+                                        isVerified={userFormData.isVerified}
+                                        registrationDate={userFormData.createdAt}
                                         colors={colors}
                                     />
 
@@ -311,6 +329,7 @@ export default function VoteSecureProfile(): JSX.Element {
                                      * Purpose: Shows proof of identity verification for voting
                                      */}
                                     <VerificationDocumentsCard
+                                        isVerified={userFormData.isVerified}
                                         documents={verificationDocuments}
                                         colors={colors}
                                     />
@@ -321,6 +340,7 @@ export default function VoteSecureProfile(): JSX.Element {
                                      * Purpose: Shows upcoming and available voting opportunities
                                      */}
                                     <EligibleElectionsCard
+                                        isVerified={userFormData.isVerified}
                                         elections={eligibleElections}
                                         colors={colors}
                                     />
@@ -339,93 +359,7 @@ export default function VoteSecureProfile(): JSX.Element {
              * - Animation class utilities for component transitions
              * - Global input and scroll behavior styling
              */}
-            <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-                
-                /* ==================== FADE ANIMATIONS ==================== */
-                
-                /* Fade In animation with downward slide effect */
-                /* Used for elements that should appear from the top */
-                @keyframes fadeInDown {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                
-                /* Fade In animation with upward slide effect */
-                /* Used for elements that should appear from the bottom */
-                @keyframes fadeInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                
-                /* Simple fade in animation */
-                /* Used for opacity-only transitions */
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                    }
-                    to {
-                        opacity: 1;
-                    }
-                }
-                
-                /* Grid background animation effect */
-                /* Creates a moving grid pattern in the background */
-                @keyframes gridMoveFast {
-                    0% {
-                        transform: translate(0, 0);
-                    }
-                    100% {
-                        transform: translate(48px, 48px);
-                    }
-                }
-                
-                /* ==================== ANIMATION CLASS UTILITIES ==================== */
-                
-                /* Applies fadeInDown animation to elements */
-                .animate-fadeInDown {
-                    animation: fadeInDown 0.5s ease-out forwards;
-                }
-                
-                /* Applies fadeInUp animation to elements */
-                .animate-fadeInUp {
-                    animation: fadeInUp 0.5s ease-out forwards;
-                }
-                
-                /* Applies fadeIn animation to elements */
-                .animate-fadeIn {
-                    animation: fadeIn 0.2s ease-out forwards;
-                }
-                
-                /* ==================== GLOBAL BEHAVIORS ==================== */
-                
-                /* Enable smooth scrolling across the entire page */
-                * {
-                    scroll-behavior: smooth;
-                }
-                
-                /* Input placeholder styling - shows at normal opacity */
-                input::placeholder {
-                    opacity: 0.5;
-                }
-                
-                /* Input placeholder styling - dims when input is focused */
-                input:focus::placeholder {
-                    opacity: 0.3;
-                }
-            `}</style>
+            <style>{profile_style}</style>
         </div>
     );
 }

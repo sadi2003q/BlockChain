@@ -30,7 +30,7 @@ export const ProfileTabs: React.FC<ProfileTabsProps> = ({
                     className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-300 whitespace-nowrap"
                     style={{
                         backgroundColor: activeTab === tab.id ? colors.accent.primary : 'transparent',
-                        color: activeTab === tab.id ? '#ffffff' : colors.text.secondary,
+                        color: activeTab === tab.id ? colors.text.foreground : colors.text.secondary,
                         fontFamily: "'Inter', sans-serif",
                         boxShadow: activeTab === tab.id ? `0 8px 24px ${colors.glow.primary}` : 'none'
                     }}

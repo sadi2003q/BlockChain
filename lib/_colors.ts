@@ -13,6 +13,7 @@ export type _colorType= {
         secondary: string
         tertiary: string
         muted: string
+        foreground: string
     }
     accent: {
         primary: string
@@ -48,10 +49,11 @@ export const getColor = (isDarkMode: boolean): _colorType => ({
         secondary: isDarkMode ? '#d4d4d4' : '#4a4a4a',
         tertiary: isDarkMode ? '#a3a3a3' : '#6a6a6a',
         muted: isDarkMode ? '#737373' : '#8a8a8a',
+        foreground: isDarkMode ? 'black' : 'white'
     },
 
     accent: {
-        primary: isDarkMode ? '#dc2626' : '#780116',
+        primary: isDarkMode ? '#facc15' : '#780116', // changed from red to yellow
         secondary: isDarkMode ? '#f59e0b' : '#2563eb',
         success: isDarkMode ? '#22c55e' : '#16a34a',
         warning: isDarkMode ? '#f59e0b' : '#d97706',

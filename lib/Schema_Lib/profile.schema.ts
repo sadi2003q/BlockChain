@@ -1,7 +1,7 @@
 // Enums from User schema
 import {LucideIcon} from "lucide-react";
+import {USER_GENDER} from "@/model/user.model";
 
-export type Gender = 'MALE' | 'FEMALE' | 'THIRD_GENDER';
 export type VerificationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 // User interface based on schema
@@ -13,7 +13,7 @@ export interface User {
     passwordHash: string;
     dateOfBirth: Date;
     age: number;
-    gender: Gender;
+    gender: USER_GENDER;
     address: string;
     isVerified: boolean;
     verificationStatus: VerificationStatus;
@@ -74,7 +74,7 @@ export const userData: User = {
     passwordHash: '', // Not exposed in frontend
     dateOfBirth: new Date('1998-05-15'),
     age: 26,
-    gender: 'MALE',
+    gender: USER_GENDER.Male,
     address: '123 Campus Drive, University City, ST 12345',
     isVerified: true,
     verificationStatus: 'APPROVED',
@@ -139,3 +139,20 @@ export const eligibleElections: EligibleElection[] = [
         name: 'Club & Society Elections'
     }
 ];
+
+/**
+ * MenuItem Interface
+ *
+ * Defines the structure for menu items displayed in the profile dropdown menu.
+ * Each menu item contains an icon, label, and associated action handler.
+ *
+ * @interface MenuItem
+ * @property {LucideIcon} icon - The Lucid React icon component to display
+ * @property {string} label - The display text for the menu item
+ * @property {() => void} action - The callback function executed when the menu item is clicked
+ */
+export interface MenuItem {
+    icon: LucideIcon;
+    label: string;
+    action: () => void;
+}

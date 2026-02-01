@@ -2,8 +2,9 @@ import React, { ChangeEvent } from 'react';
 import { User, Camera, CheckCircle } from 'lucide-react';
 import {_colorType} from "@/lib/_colors";
 
+
 interface ProfileImageCardProps {
-    profileImage: string | null;
+    profileImage: string | File | null;
     userName: string;
     voterId: string;
     isVerified: boolean;
@@ -70,12 +71,17 @@ export const ProfileImageCard: React.FC<ProfileImageCardProps> = ({
                 >
                     {userName}
                 </h2>
-                <p
-                    className="text-sm mb-4"
-                    style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
-                >
-                    Voter ID: {voterId}
-                </p>
+
+                {isVerified && (
+                    <p
+                        className="text-sm mb-4"
+                        style={{ color: colors.text.secondary, fontFamily: "'Inter', sans-serif" }}
+                    >
+                        Voter ID: {voterId}
+                    </p>
+                )}
+
+
 
                 {/* Status Badge */}
                 <div

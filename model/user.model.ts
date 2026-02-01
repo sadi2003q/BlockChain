@@ -1,13 +1,22 @@
 
 
-export interface USER_MODEL {
+export enum USER_GENDER {
+    Male = "male",
+    Female = "female",
+    Other = "other",
+}
+
+
+
+export interface USER_MODEL_SIGNUP {
     name: string
-    email: string
-    phone: string
+    gender: USER_GENDER
+    email: string,
+    phone: string,
+    dateOfBirth: string,
+    address: string,
+    profileImage: File | null,
+    isVerified: boolean
     password: string
     confirmPassword: string
-    dateOfBirth: string
-    gender: string
-    address: string
-    profileImage?: File | null
 }
