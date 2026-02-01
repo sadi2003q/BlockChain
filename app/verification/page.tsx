@@ -1,6 +1,3 @@
-
-
-
 "use client"
 
 import React, { useState, useRef, useEffect, FormEvent, KeyboardEvent, ClipboardEvent } from 'react';
@@ -18,27 +15,37 @@ import {State_Success} from "@/components/verification/State_Success";
 import {State_Error} from "@/components/verification/State_Error";
 import {State_Idle} from "@/components/verification/State_Idle";
 import {VerificationStatus} from "@/lib/Schema_Lib/verification.schema"
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function EmailVerification() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // State management
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [otp, setOtp] = useState<string[]>(new Array(6).fill(''));
     const [status, setStatus] = useState<VerificationStatus>('idle');
-
-    //FIXME: SET EMAIL IS NOT DEFINED
-    const [email,] = useState<string>('john@university.edu');
-
+    const [email, setEmail] = useState<string>('');
     const [isResending, setIsResending] = useState<boolean>(false);
     const [resendTimer, setResendTimer] = useState<number>(300); // 5 minutes in seconds
     const [canResend, setCanResend] = useState<boolean>(false);
+
+    // Refs
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-    // Mock OTP for demonstration (in production, this would be validated against backend)
-    const MOCK_OTP = '123456';
+    const sentOtpRef = useRef<string>(''); // Store the OTP sent to email
 
     // Color system matching the landing page
-    const colors = getColor(isDarkMode)
+    const colors = getColor(isDarkMode);
 
+    // Generate 6-digit random OTP
+    const generateRandomNumber = (): string => {
+        return Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+    };
+
+    // Timer management
     const startTimer = () => {
         if (timerRef.current) {
             clearInterval(timerRef.current);
@@ -56,11 +63,100 @@ export default function EmailVerification() {
             });
         }, 1000);
     };
+
     const formatTime = (seconds: number): string => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
+
+    // Send OTP email
+    const handleSendEmail = async (isResend: boolean = false): Promise<boolean> => {
+        try {
+            const newOtp = generateRandomNumber();
+            sentOtpRef.current = newOtp; // Store OTP for verification
+
+            // Send OTP to the backend
+            const response = await axios.post('/api/user/verify', {
+                email: email,
+                otp: newOtp,
+                type: isResend ? 'resend' : 'initial'
+            });
+
+            if (response.data.success) {
+                if (isResend) {
+                    toast.success('Verification code resent successfully!');
+                } else {
+                    toast.success('Verification code sent to your email!');
+                }
+                return true;
+            } else {
+                toast.error(response.data.message || 'Failed to send verification code');
+                return false;
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const errorMessage = error.response?.data?.message || 'Failed to send verification code';
+                console.error('Email send error:', errorMessage);
+                toast.error(errorMessage);
+            } else if (error instanceof Error) {
+                console.error('Email send error:', error.message);
+                toast.error(error.message);
+            } else {
+                console.error('Unknown error:', error);
+                toast.error('An unexpected error occurred');
+            }
+            return false;
+        }
+    };
+
+    // Verify OTP
+    const verifyOtp = async (otpString: string) => {
+        setStatus('verifying');
+
+        try {
+            // Verify against stored OTP
+            if (otpString === sentOtpRef.current) {
+                // Call backend to mark email as verified
+                const response = await axios.post('/api/user/verify/confirm', {
+                    email: email,
+                    otp: otpString
+                });
+
+                if (response.data.success) {
+                    setStatus('success');
+                    toast.success('Email verified successfully!');
+
+                    // Clear timer on success
+                    if (timerRef.current) {
+                        clearInterval(timerRef.current);
+                    }
+
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        router.push('/dashboard');
+                    }, 2000);
+                } else {
+                    setStatus('error');
+                    toast.error('Verification failed. Please try again.');
+                }
+            } else {
+                setStatus('error');
+                toast.error('Invalid verification code');
+            }
+        } catch (error) {
+            setStatus('error');
+            if (axios.isAxiosError(error)) {
+                const errorMessage = error.response?.data?.message || 'Verification failed';
+                toast.error(errorMessage);
+            } else {
+                toast.error('Verification failed. Please try again.');
+            }
+            console.error('Verification error:', error);
+        }
+    };
+
+    // OTP Input handlers
     const handleChange = (index: number, value: string) => {
         // Only allow numbers
         if (value && !/^\d+$/.test(value)) return;
@@ -77,9 +173,10 @@ export default function EmailVerification() {
         // Auto-verify when all 6 digits are entered
         if (index === 5 && value) {
             const otpString = [...newOtp.slice(0, 5), value].join('');
-            verifyOtp(otpString);
+            verifyOtp(otpString).then();
         }
     };
+
     const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
         // Move to the previous input on backspace if the current is empty
         if (e.key === 'Backspace' && !otp[index] && index > 0) {
@@ -96,6 +193,7 @@ export default function EmailVerification() {
             inputRefs.current[index - 1]?.focus();
         }
     };
+
     const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
         const pastedData = e.clipboardData.getData('text').slice(0, 6);
@@ -117,63 +215,85 @@ export default function EmailVerification() {
         } else {
             inputRefs.current[5]?.focus();
             // Auto-verify if all digits are pasted
-            verifyOtp(newOtp.join(''));
+            verifyOtp(newOtp.join('')).then();
         }
     };
-    const verifyOtp = (otpString: string) => {
-        setStatus('verifying');
 
-        // Simulate API call
-        setTimeout(() => {
-            if (otpString === MOCK_OTP) {
-                setStatus('success');
-            } else {
-                setStatus('error');
-            }
-        }, 1000);
-    };
+    // Form submission
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const otpString = otp.join('');
         if (otpString.length === 6) {
-            verifyOtp(otpString);
+            verifyOtp(otpString).then();
         }
     };
-    const handleResend = () => {
-        if (!canResend) return;
+
+    // Resend OTP
+    const handleResend = async () => {
+        if (!canResend || isResending) return;
 
         setIsResending(true);
         setOtp(new Array(6).fill(''));
         setStatus('idle');
-        inputRefs.current[0]?.focus();
 
-        // Simulate resend
-        setTimeout(() => {
-            setIsResending(false);
+        // Send new OTP
+        const success = await handleSendEmail(true);
+
+        if (success) {
             // Reset timer to 5 minutes
             setResendTimer(300);
             startTimer();
-        }, 2000);
+        }
+
+        setIsResending(false);
+        inputRefs.current[0]?.focus();
     };
+
+    // Try again after an error
     const handleTryAgain = () => {
         setOtp(new Array(6).fill(''));
         setStatus('idle');
         inputRefs.current[0]?.focus();
     };
 
+    // Initialize on mount
     useEffect(() => {
-        // Focus first input on the mount
+        // Get email from URL params (passed from signup/signin)
+        const emailParam = searchParams.get('email');
+        if (emailParam) {
+            setEmail(emailParam);
+        } else {
+            // If no email in params, redirect to signin
+            toast.error('Email not found. Please sign in again.');
+            router.push('/signin');
+            return;
+        }
+
+        // Send initial OTP email
+        const initializeVerification = async () => {
+            const success = await handleSendEmail(false);
+            if (!success) {
+                // If the email sending fails, show an error but don't redirect
+                console.error('Failed to send initial verification email');
+            }
+        };
+
+        initializeVerification().then();
+
+        // Focus first input
         inputRefs.current[0]?.focus();
 
-        // Start timer on mount
+        // Start timer
         startTimer();
 
+        // Cleanup on unmounting
         return () => {
             if (timerRef.current) {
                 clearInterval(timerRef.current);
             }
         };
     }, []);
+
     useEffect(() => {
         // Update canResend based on the timer
         setCanResend(resendTimer === 0);
@@ -200,7 +320,7 @@ export default function EmailVerification() {
                 {status !== 'success' && <SuccessButton colors={colors}/> }
 
                 {/* Logo Header */}
-               <LogoHeader colors={colors} email={email} status={status}/>
+                <LogoHeader colors={colors} email={email} status={status}/>
 
 
                 {/* Verification Form */}
@@ -280,7 +400,7 @@ export default function EmailVerification() {
                                         fontFamily: "'Inter', sans-serif"
                                     }}
                                 >
-                                    don&#39;t receive the code?
+                                    Didn&#39;t receive the code?
                                 </p>
                                 <button
                                     type="button"
@@ -322,7 +442,7 @@ export default function EmailVerification() {
                 {/* Error State - Try Again */}
                 {status === 'error' && <State_Error colors={colors} handleTryAgain={handleTryAgain} /> }
 
-                {/* Back to Sign In Link */}
+                {/* Idle State */}
                 {status === 'idle' && <State_Idle colors={colors}/> }
             </div>
 

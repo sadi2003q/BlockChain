@@ -13,16 +13,17 @@
     "axios": "^1.13.4",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
+    "inngest": "^3.49.3",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.563.0",
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.5",
-    "inngest": "^3.49.3",
     "next": "16.1.5",
     "next-cloudinary": "^6.17.5",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-hot-toast": "^2.6.0"
+    "react-hot-toast": "^2.6.0",
+    "resend": "^6.9.1"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.1.0",
