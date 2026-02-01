@@ -52,12 +52,6 @@ export interface TabItem {
     icon: LucideIcon;
 }
 
-// Profile display data (combines User + additional info)
-export interface ProfileData {
-    user: User;
-    voterInfo: VoterInfo;
-    votingStats: VotingStatistics;
-}
 
 // Eligible Elections list
 export interface EligibleElection {
@@ -71,7 +65,7 @@ export const userData: User = {
     name: 'Alex Thompson',
     email: 'alex.thompson@university.edu',
     phone: '+1 (555) 123-4567',
-    passwordHash: '', // Not exposed in frontend
+    passwordHash: '', // Not exposed in the frontend
     dateOfBirth: new Date('1998-05-15'),
     age: 26,
     gender: USER_GENDER.Male,

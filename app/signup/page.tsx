@@ -37,7 +37,7 @@ export default function VoteSecureSignUp() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [formData, setFormData] = useState<USER_MODEL_SIGNUP>({
-        id: "", isVerified: false,
+        isVerified: false,
         name: 'Adnan Abdullah',
         email: 'Adnan@gmail.com',
         phone: '01999477414',

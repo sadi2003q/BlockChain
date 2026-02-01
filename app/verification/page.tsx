@@ -4,11 +4,20 @@
 "use client"
 
 import React, { useState, useRef, useEffect, FormEvent, KeyboardEvent, ClipboardEvent } from 'react';
-import { Shield, CheckCircle, XCircle, ArrowRight, Moon, Sun, RefreshCw, ArrowLeft } from 'lucide-react';
+import {RefreshCw } from 'lucide-react';
 import {getColor} from "@/lib/_colors";
 import {verification_style} from "@/lib/style/verification";
-
-type VerificationStatus = 'idle' | 'verifying' | 'success' | 'error';
+import {ThemeToggleButton} from "@/components/signin/ThemeToggleButton";
+import {AnimatedBackground} from "@/components/profile/AnimatedBackground";
+import {Gradient} from "@/components/verification/Gradient";
+import {SuccessButton} from "@/components/verification/SuccessButton";
+import {LogoHeader} from "@/components/verification/LogoHeader";
+import {ErrorMessage} from "@/components/verification/ErrorMessage";
+import {SubmitButton} from "@/components/verification/SubmitButton";
+import {State_Success} from "@/components/verification/State_Success";
+import {State_Error} from "@/components/verification/State_Error";
+import {State_Idle} from "@/components/verification/State_Idle";
+import {VerificationStatus} from "@/lib/Schema_Lib/verification.schema"
 
 export default function EmailVerification() {
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
@@ -16,9 +25,7 @@ export default function EmailVerification() {
     const [status, setStatus] = useState<VerificationStatus>('idle');
 
     //FIXME: SET EMAIL IS NOT DEFINED
-    const [email, setEmail] = useState<string>('john@university.edu');
-
-
+    const [email,] = useState<string>('john@university.edu');
 
     const [isResending, setIsResending] = useState<boolean>(false);
     const [resendTimer, setResendTimer] = useState<number>(300); // 5 minutes in seconds
@@ -31,7 +38,6 @@ export default function EmailVerification() {
 
     // Color system matching the landing page
     const colors = getColor(isDarkMode)
-
 
     const startTimer = () => {
         if (timerRef.current) {
@@ -50,35 +56,11 @@ export default function EmailVerification() {
             });
         }, 1000);
     };
-
-
-
-    useEffect(() => {
-        // Focus first input on the mount
-        inputRefs.current[0]?.focus();
-
-        // Start timer on mount
-        startTimer();
-
-        return () => {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        // Update canResend based on the timer
-        setCanResend(resendTimer === 0);
-    }, [resendTimer]);
-
-
     const formatTime = (seconds: number): string => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
-
     const handleChange = (index: number, value: string) => {
         // Only allow numbers
         if (value && !/^\d+$/.test(value)) return;
@@ -98,7 +80,6 @@ export default function EmailVerification() {
             verifyOtp(otpString);
         }
     };
-
     const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
         // Move to the previous input on backspace if the current is empty
         if (e.key === 'Backspace' && !otp[index] && index > 0) {
@@ -115,7 +96,6 @@ export default function EmailVerification() {
             inputRefs.current[index - 1]?.focus();
         }
     };
-
     const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
         e.preventDefault();
         const pastedData = e.clipboardData.getData('text').slice(0, 6);
@@ -140,7 +120,6 @@ export default function EmailVerification() {
             verifyOtp(newOtp.join(''));
         }
     };
-
     const verifyOtp = (otpString: string) => {
         setStatus('verifying');
 
@@ -153,7 +132,6 @@ export default function EmailVerification() {
             }
         }, 1000);
     };
-
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const otpString = otp.join('');
@@ -161,7 +139,6 @@ export default function EmailVerification() {
             verifyOtp(otpString);
         }
     };
-
     const handleResend = () => {
         if (!canResend) return;
 
@@ -178,12 +155,30 @@ export default function EmailVerification() {
             startTimer();
         }, 2000);
     };
-
     const handleTryAgain = () => {
         setOtp(new Array(6).fill(''));
         setStatus('idle');
         inputRefs.current[0]?.focus();
     };
+
+    useEffect(() => {
+        // Focus first input on the mount
+        inputRefs.current[0]?.focus();
+
+        // Start timer on mount
+        startTimer();
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+        };
+    }, []);
+    useEffect(() => {
+        // Update canResend based on the timer
+        setCanResend(resendTimer === 0);
+    }, [resendTimer]);
+
 
     return (
         <div
@@ -191,114 +186,22 @@ export default function EmailVerification() {
             style={{ backgroundColor: colors.bg.primary }}
         >
             {/* Dark Mode Toggle Button - Top Right */}
-            <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="fixed top-6 right-6 z-50 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
-                style={{
-                    backgroundColor: colors.bg.tertiary,
-                    border: `1px solid ${colors.border.subtle}`,
-                    boxShadow: `0 4px 16px ${colors.glow.primary}`
-                }}
-            >
-                {isDarkMode ? (
-                    <Sun className="w-5 h-5" style={{ color: colors.accent.warning }} />
-                ) : (
-                    <Moon className="w-5 h-5" style={{ color: colors.accent.primary }} />
-                )}
-            </button>
+            <ThemeToggleButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode}/>
 
             {/* Animated Background Grid - Faster */}
-            <div className="absolute inset-0 opacity-20">
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        backgroundImage: isDarkMode
-                            ? 'linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px)'
-                            : 'linear-gradient(rgba(79, 70, 229, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(79, 70, 229, 0.02) 1px, transparent 1px)',
-                        backgroundSize: '40px 40px',
-                        animation: 'gridMoveFast 10s linear infinite'
-                    }}
-                />
-            </div>
+            <AnimatedBackground isDarkMode={isDarkMode}/>
 
             {/* Gradient Orbs - Faster */}
-            <div
-                className="absolute top-20 right-20 w-[400px] h-[400px] rounded-full blur-3xl opacity-20 animate-pulse"
-                style={{
-                    background: `radial-gradient(circle, ${status === 'success' ? colors.accent.success : status === 'error' ? colors.accent.danger : colors.accent.primary}, transparent)`,
-                    animationDuration: '2s'
-                }}
-            />
-            <div
-                className="absolute bottom-20 left-20 w-[350px] h-[350px] rounded-full blur-3xl opacity-20 animate-pulse"
-                style={{
-                    background: `radial-gradient(circle, ${colors.accent.secondary}, transparent)`,
-                    animationDuration: '3s',
-                    animationDelay: '0.5s'
-                }}
-            />
+            <Gradient colors={colors} status={status}/>
 
             {/* Main Content */}
             <div className="w-full max-w-md relative z-10">
                 {/* Back Button */}
-                {status !== 'success' && (
-                    <button
-                        onClick={() => {/* Navigate back */}}
-                        className="flex items-center gap-2 mb-6 transition-all duration-300 hover:gap-3 group"
-                        style={{
-                            color: colors.text.secondary,
-                            fontFamily: "'Inter', sans-serif"
-                        }}
-                    >
-                        <ArrowLeft className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" />
-                        <span className="text-sm font-semibold">Back to Sign In</span>
-                    </button>
-                )}
+                {status !== 'success' && <SuccessButton colors={colors}/> }
 
                 {/* Logo Header */}
-                <div className="text-center mb-8 animate-fadeIn">
-                    <div className="flex items-center justify-center gap-3 mb-6">
-                        <div
-                            className="w-14 h-14 rounded-xl flex items-center justify-center transform hover:rotate-6 transition-transform duration-300"
-                            style={{
-                                backgroundColor: status === 'success' ? colors.accent.success : status === 'error' ? colors.accent.danger : colors.accent.primary,
-                                boxShadow: `0 12px 32px ${status === 'success' ? colors.glow.success : status === 'error' ? colors.glow.primary : colors.glow.primary}`
-                            }}
-                        >
-                            {status === 'success' ? (
-                                <CheckCircle className="w-8 h-8 text-white" />
-                            ) : status === 'error' ? (
-                                <XCircle className="w-8 h-8 text-white" />
-                            ) : (
-                                <Shield className="w-8 h-8 text-white" />
-                            )}
-                        </div>
-                    </div>
+               <LogoHeader colors={colors} email={email} status={status}/>
 
-                    <h1
-                        className="text-3xl font-bold mb-2"
-                        style={{
-                            fontFamily: "'Sora', sans-serif",
-                            color: colors.text.primary
-                        }}
-                    >
-                        {status === 'success' ? 'Email Verified!' : status === 'error' ? 'Verification Failed' : 'Verify Your Email'}
-                    </h1>
-                    <p
-                        className="text-base"
-                        style={{
-                            color: colors.text.secondary,
-                            fontFamily: "'Inter', sans-serif"
-                        }}
-                    >
-                        {status === 'success'
-                            ? 'Your email has been successfully verified'
-                            : status === 'error'
-                                ? 'The code you entered is incorrect'
-                                : `We've sent a 6-digit code to ${email}`
-                        }
-                    </p>
-                </div>
 
                 {/* Verification Form */}
                 {status !== 'success' && (
@@ -363,51 +266,10 @@ export default function EmailVerification() {
                             </div>
 
                             {/* Error Message */}
-                            {status === 'error' && (
-                                <div
-                                    className="mb-6 p-4 rounded-xl flex items-center gap-3 animate-fadeIn"
-                                    style={{
-                                        backgroundColor: `${colors.accent.danger}15`,
-                                        border: `1px solid ${colors.accent.danger}30`
-                                    }}
-                                >
-                                    <XCircle className="w-5 h-5 flex-shrink-0" style={{ color: colors.accent.danger }} />
-                                    <p
-                                        className="text-sm font-medium"
-                                        style={{
-                                            color: colors.accent.danger,
-                                            fontFamily: "'Inter', sans-serif"
-                                        }}
-                                    >
-                                        Invalid verification code. Please try again.
-                                    </p>
-                                </div>
-                            )}
+                            {status === 'error' && <ErrorMessage colors={colors}/>}
 
                             {/* Submit Button */}
-                            <button
-                                type="submit"
-                                disabled={otp.join('').length !== 6 || status === 'verifying'}
-                                className="group w-full py-4 rounded-xl font-bold text-base tracking-wide transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 mb-6"
-                                style={{
-                                    backgroundColor: colors.accent.primary,
-                                    color: '#ffffff',
-                                    fontFamily: "'Inter', sans-serif",
-                                    boxShadow: `0 12px 32px ${colors.glow.primary}`
-                                }}
-                            >
-                                {status === 'verifying' ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                        Verifying...
-                                    </>
-                                ) : (
-                                    <>
-                                        Verify Email
-                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                                    </>
-                                )}
-                            </button>
+                            <SubmitButton colors={colors} status={status} otp={otp}/>
 
                             {/* Resend Code */}
                             <div className="text-center">
@@ -418,7 +280,7 @@ export default function EmailVerification() {
                                         fontFamily: "'Inter', sans-serif"
                                     }}
                                 >
-                                    Didn&#39;t receive the code?
+                                    don&#39;t receive the code?
                                 </p>
                                 <button
                                     type="button"
@@ -455,101 +317,13 @@ export default function EmailVerification() {
                 )}
 
                 {/* Success State */}
-                {status === 'success' && (
-                    <div
-                        className="p-10 rounded-3xl backdrop-blur-xl relative overflow-hidden animate-fadeIn text-center"
-                        style={{
-                            backgroundColor: colors.bg.card,
-                            border: `1px solid ${colors.border.subtle}`,
-                            boxShadow: `0 24px 48px ${colors.glow.success}`
-                        }}
-                    >
-                        {/* Success glow effect */}
-                        <div
-                            className="absolute inset-0 rounded-full blur-3xl opacity-20 pointer-events-none animate-pulse"
-                            style={{ background: colors.accent.success, animationDuration: '2s' }}
-                        />
-
-                        <div className="relative z-10">
-                            {/* Success Icon */}
-                            <div
-                                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-scaleIn"
-                                style={{
-                                    backgroundColor: `${colors.accent.success}20`,
-                                    border: `3px solid ${colors.accent.success}`
-                                }}
-                            >
-                                <CheckCircle className="w-10 h-10" style={{ color: colors.accent.success }} />
-                            </div>
-
-                            <h2
-                                className="text-2xl font-bold mb-3"
-                                style={{
-                                    fontFamily: "'Sora', sans-serif",
-                                    color: colors.text.primary
-                                }}
-                            >
-                                Congratulations! 🎉
-                            </h2>
-
-                            <p
-                                className="text-base mb-8"
-                                style={{
-                                    color: colors.text.secondary,
-                                    fontFamily: "'Inter', sans-serif"
-                                }}
-                            >
-                                Your email has been successfully verified. You can now access all features of VoteSecure.
-                            </p>
-
-                            <button
-                                onClick={() => {/* Navigate to dashboard */}}
-                                className="group px-8 py-4 rounded-xl font-bold text-base tracking-wide transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 mx-auto"
-                                style={{
-                                    backgroundColor: colors.accent.success,
-                                    color: '#ffffff',
-                                    fontFamily: "'Inter', sans-serif",
-                                    boxShadow: `0 12px 32px ${colors.glow.success}`
-                                }}
-                            >
-                                Continue to Dashboard
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                            </button>
-                        </div>
-                    </div>
-                )}
+                {status === 'success' && <State_Success colors={colors}/> }
 
                 {/* Error State - Try Again */}
-                {status === 'error' && (
-                    <div className="text-center mt-6">
-                        <button
-                            onClick={handleTryAgain}
-                            className="text-sm font-semibold transition-all duration-300 hover:opacity-80"
-                            style={{
-                                color: colors.accent.primary,
-                                fontFamily: "'Inter', sans-serif"
-                            }}
-                        >
-                            Clear and try again
-                        </button>
-                    </div>
-                )}
+                {status === 'error' && <State_Error colors={colors} handleTryAgain={handleTryAgain} /> }
 
                 {/* Back to Sign In Link */}
-                {status === 'idle' && (
-                    <div className="text-center mt-6">
-                        <a
-                            href="#"
-                            className="text-sm font-semibold transition-all duration-300 hover:opacity-80"
-                            style={{
-                                color: colors.text.secondary,
-                                fontFamily: "'Inter', sans-serif"
-                            }}
-                        >
-                            ← Back to Sign In
-                        </a>
-                    </div>
-                )}
+                {status === 'idle' && <State_Idle colors={colors}/> }
             </div>
 
             {/* CSS Animations */}
