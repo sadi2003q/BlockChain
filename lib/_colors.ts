@@ -31,6 +31,7 @@ export type _colorType= {
     glow: {
         primary: string,
         secondary: string,
+        success: string
     },
 }
 
@@ -73,5 +74,8 @@ export const getColor = (isDarkMode: boolean): _colorType => ({
         secondary: isDarkMode
             ? 'rgba(245, 158, 11, 0.2)'
             : 'rgba(37, 99, 235, 0.08)',
+        success: isDarkMode
+            ? 'rgba(34, 197, 94, 0.25)'
+            : 'rgba(22, 163, 74, 0.15)',
     },
 });
